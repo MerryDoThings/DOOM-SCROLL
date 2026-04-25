@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOOM/SCROLL v2.6</title>
+<title>DOOM/SCROLL — un feed che vuole il tuo QI</title>
+<meta name="description" content="Un feed satirico italiano dove l'obiettivo è smettere di scrollare. Il tuo QI cala, il cervello ti scrive, gli sponsor wellness ti vogliono salvare a pagamento. 5 finali da scoprire.">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="DOOM/SCROLL — un feed che vuole il tuo QI">
+<meta property="og:description" content="Un feed satirico italiano dove l'obiettivo è smettere di scrollare. 5 finali da scoprire.">
+<meta property="og:image" content="og-image.png">
+<meta property="og:locale" content="it_IT">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DOOM/SCROLL — un feed che vuole il tuo QI">
+<meta name="twitter:description" content="Un feed satirico italiano dove l'obiettivo è smettere di scrollare. 5 finali da scoprire.">
+<meta name="twitter:image" content="og-image.png">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0d0d'/%3E%3Ccircle cx='16' cy='16' r='8' fill='%23e03535'/%3E%3C/svg%3E">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -14,7 +30,10 @@
   body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
   #app { max-width: 480px; margin: 0 auto; padding: 0 12px 80px; }
   .header { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0 10px; z-index: 50; }
-  .app-title { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; font-family: 'Courier New', monospace; }
+  .app-title { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; font-family: 'Courier New', monospace; }
+  .app-subtitle { font-size: 10px; color: var(--text-faint); margin: 0 0 10px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; line-height: 1.5; }
+  .app-subtitle .pill { color: var(--text-muted); }
+  .app-subtitle .pill.found { color: var(--text-dim); }
   .brand { color: var(--text-dim); letter-spacing: 0.22em; }
   .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
   .iq-stage { margin-left: auto; font-size: 9px; color: var(--text-faint); letter-spacing: 0.05em; text-transform: lowercase; }
@@ -102,6 +121,11 @@
   .ending-finals { font-size: 10px; margin-top: 6px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; opacity: 0.5; line-height: 1.6; }
   .ending-restart { margin-top: 24px; padding: 12px 28px; background: transparent; border: 1px solid currentColor; color: currentColor; cursor: pointer; font-size: 12px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 6px; transition: opacity 0.2s; }
   .ending-restart:hover { opacity: 0.7; }
+  .ending-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+  .ending-actions .ending-restart { margin-top: 0; }
+  .ending-share { padding: 12px 22px; background: transparent; border: 1px solid currentColor; color: currentColor; cursor: pointer; font-size: 12px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 6px; opacity: 0.85; transition: opacity 0.2s; }
+  .ending-share:hover { opacity: 1; }
+  .ending-share.copied { opacity: 0.5; }
 
   .news-comment { margin-top: 9px; padding-top: 8px; border-top: 1px solid #1e1e1e; font-size: 11px; color: #707070; line-height: 1.35; font-family: 'Courier New', monospace; }
   .news-card.brainrot-news { border-color: #ff3030; box-shadow: 0 0 0 1px rgba(255,48,48,.15); animation: fadeUp 0.3s ease, glitch2 1.2s infinite; }
@@ -174,6 +198,7 @@
       <span class="brand">DOOM/SCROLL</span>
       <span class="iq-stage" id="iqStage">cosciente</span>
     </div>
+    <div class="app-subtitle" id="appSubtitle">scrolla. il QI cala. <span class="pill" id="finalsPill">5 finali da scoprire.</span></div>
     <div class="stats-row">
       <div class="stat"><div class="stat-val" id="iqVal">100</div><div class="stat-lbl">QI residuo</div></div>
       <div class="stat"><div class="stat-val" id="timerVal">00:00</div><div class="stat-lbl">Tempo perso</div></div>
@@ -1815,6 +1840,7 @@ let gameOver = false, totalLoadMore = 0;
 let adClicks = 0, usefulAdClicks = 0, spiritualDebt = 0, adsShown = 0, loadsSinceAd = 0;
 let brainrotLevel = 0, doubleClickStreak = 0, lastLoadClickAt = 0;
 let scrollLossDebt = 0;
+let lastStage = '';
 let mainTimerId = null;
 let brainTimerId = null;
 let interruptionCount = 0;
@@ -1858,13 +1884,43 @@ function unlockFinal(name) {
   const u = getUnlocked();
   if (!u.includes(name)) { u.push(name); localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
 }
+function updateFinalsPill() {
+  const pill = document.getElementById('finalsPill');
+  if (!pill) return;
+  const u = getUnlocked();
+  if (u.length === 0) {
+    pill.textContent = '5 finali da scoprire.';
+    pill.classList.remove('found');
+  } else if (u.length >= 5) {
+    pill.textContent = 'tutti e 5 i finali sbloccati. ora scrolli per sport.';
+    pill.classList.add('found');
+  } else {
+    pill.textContent = `${u.length}/5 finali sbloccati. ne mancano ${5 - u.length}.`;
+    pill.classList.add('found');
+  }
+}
 
 function updateIQDisplay() {
   document.getElementById('iqVal').textContent = iq;
   document.getElementById('progressFill').style.width = iq + '%';
   document.getElementById('progressLbl').textContent = `QI: ${iq}/100`;
+  let newStage = '';
   for (const [thr, label] of IQ_STAGES) {
-    if (iq >= thr) { document.getElementById('iqStage').textContent = label; break; }
+    if (iq >= thr) { document.getElementById('iqStage').textContent = label; newStage = label; break; }
+  }
+  // Quando entri in una nuova fase di degrado, lo dico una volta sola, in modo narrativo.
+  if (newStage && newStage !== lastStage) {
+    if (lastStage !== '') {
+      const stageMsgs = {
+        'lievemente intontito': 'sei ufficialmente lievemente intontito. ben arrivato.',
+        'mente plastificata': 'mente plastificata. il cartone si curva, non si spezza.',
+        'vuoto cosmico': 'vuoto cosmico raggiunto. la stanza intorno è facoltativa.',
+        'proto-nirvana': 'proto-nirvana. il pollice continua per inerzia spirituale.',
+        'nirvana': 'nirvana. non legge più nemmeno questo toast.'
+      };
+      if (stageMsgs[newStage]) showToast(stageMsgs[newStage], 'bad');
+    }
+    lastStage = newStage;
   }
   const iqEl = document.getElementById('iqVal');
   if (iq < 20) iqEl.style.color = '#ff80c0';
@@ -2310,6 +2366,53 @@ function checkEndings() {
   if (iq <= 0) triggerEnding('nirvana');
 }
 
+// Testo di condivisione su misura per il finale raggiunto.
+// Volutamente leggero: deve incuriosire l'amico, non spoilerare il finale.
+function buildShareText(type) {
+  const t = timeStr(seconds);
+  const teasers = {
+    nirvana: `🧘 NIRVANA RAGGIUNTO in ${t}. QI: 0/100. Ho trasceso anche la grammatica. Provalo:`,
+    smetti: `Ho chiuso l'app dopo ${t}. Il cervello me l'aveva chiesto tre volte. Provalo:`,
+    quit: `QUIT DEFINITIVO sbloccato in ${t}. Pare che il mondo continui anche senza aggiornarlo. Provalo:`,
+    capitalismo: `💸 CAPITALISMO SPIRITUALE: ho comprato la mia pace interiore in 5 rate. Funziona. Provalo:`,
+    brainrot: `💀 BRAINROT™ in ${t}. tung tung tung sahur. Provalo:`
+  };
+  const line = teasers[type] || `DOOM/SCROLL — un feed che vuole il tuo QI. Provalo:`;
+  return `${line}\n${window.location.href}`;
+}
+
+async function shareEnding(type, btn) {
+  const text = buildShareText(type);
+  // Web Share API funziona bene su mobile (apre il foglio di condivisione nativo).
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'DOOM/SCROLL', text });
+      return;
+    } catch (err) {
+      // L'utente ha annullato. Su molti browser è AbortError: niente fallback, è una scelta consapevole.
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+  // Fallback per desktop e browser senza Web Share: copia negli appunti.
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'copiato negli appunti';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'condividi'; btn.classList.remove('copied'); }, 2400);
+  } catch {
+    // Browser molto vecchi: ultimo fallback con textarea.
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); btn.textContent = 'copiato'; btn.classList.add('copied'); }
+    catch { btn.textContent = 'copia non supportata'; }
+    document.body.removeChild(ta);
+    setTimeout(() => { btn.textContent = 'condividi'; btn.classList.remove('copied'); }, 2400);
+  }
+}
+
 function triggerEnding(type) {
   if (gameOver) return;
   gameOver = true;
@@ -2321,7 +2424,7 @@ function triggerEnding(type) {
   const finalsList = ALL.map(f => unlocked.includes(f) ? '✓ ' + NAMES[f] : '🔒 ???').join('  ·  ');
   const overlay = document.getElementById('endingOverlay');
   overlay.className = 'ending-overlay active ' + (type === 'quit' ? 'smetti' : type === 'capitalismo' ? 'cervello' : type);
-  const stats = `<div class="ending-stats"><div><span>tempo perso</span><span>${timeStr(seconds)}</span></div><div><span>QI finale</span><span>${iq}/100</span></div><div><span>cose viste</span><span>${newsCount}</span></div><div><span>cervello ascoltato</span><span>${brainListened}x</span></div><div><span>cervello ignorato</span><span>${brainIgnored}x</span></div><div><span>annunci cliccati</span><span>${adClicks}x</span></div></div><div class="ending-progress">finale ${unlocked.length} di 5 sbloccato</div><div class="ending-finals">${finalsList}</div><button class="ending-restart" onclick="restartGame()">ricomincia</button>`;
+  const stats = `<div class="ending-stats"><div><span>tempo perso</span><span>${timeStr(seconds)}</span></div><div><span>QI finale</span><span>${iq}/100</span></div><div><span>cose viste</span><span>${newsCount}</span></div><div><span>cervello ascoltato</span><span>${brainListened}x</span></div><div><span>cervello ignorato</span><span>${brainIgnored}x</span></div><div><span>annunci cliccati</span><span>${adClicks}x</span></div></div><div class="ending-progress">finale ${unlocked.length} di 5 sbloccato</div><div class="ending-finals">${finalsList}</div><div class="ending-actions"><button class="ending-share" onclick="shareEnding('${type}', this)">condividi</button><button class="ending-restart" onclick="restartGame()">ricomincia</button></div>`;
   let html = '';
   if (type === 'nirvana') {
     html = `<div class="floating-emojis" id="floatingEmojis"></div><div class="ending-emoji">🧘</div><h1>NIRVANA RAGGIUNTO</h1><p>il tuo QI è zero ✨</p><p>Hai raggiunto la pace perché non hai più strumenti per distinguere pace e resa.</p><p>non sai più preoccuparti di nulla. né del clima, né del lavoro, né del fatto che hai dimenticato il forno acceso da ieri sera 🌸</p><p>hai trasceso il pensiero. hai trasceso anche la grammatica. comunichi solo per emoji ora 🌼</p>${stats}`;
@@ -2397,6 +2500,7 @@ function resetStateForNewRun() {
   cardsSinceInterruption = 0; recentLoadClicks = []; gameOver = false; totalLoadMore = 0;
   adClicks = 0; usefulAdClicks = 0; spiritualDebt = 0; adsShown = 0; loadsSinceAd = 0; brainrotLevel = 0; doubleClickStreak = 0; lastLoadClickAt = 0; scrollLossDebt = 0; interruptionCount = 0;
   mehUsed = []; intUsed = []; peakUsed = []; adUsed = []; quizUsed = []; brainrotUsed = [];
+  lastStage = '';
   feed.innerHTML = '';
   document.getElementById('endingOverlay').className = 'ending-overlay';
   document.getElementById('endingOverlay').innerHTML = '';
@@ -2406,6 +2510,7 @@ function resetStateForNewRun() {
   document.getElementById('timerVal').textContent = '00:00';
   document.getElementById('newsCount').textContent = '0';
   updateIQDisplay();
+  updateFinalsPill();
 }
 
 function restartGame() {
@@ -2417,6 +2522,7 @@ function restartGame() {
 }
 
 function init() {
+  updateFinalsPill();
   // Primo annuncio quasi subito e molto visibile: gli ads sono una meccanica, non decorazione.
   addNewsCard();
   addAdCard();
@@ -2433,6 +2539,20 @@ function init() {
   }, 1000);
   scheduleNextBrain('neutral');
 }
+
+// Tasto Esc chiude le modal aperte (igiene UX): cervello e shop.
+// Non chiude la schermata di finale, che è intenzionalmente bloccante.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const shop = document.getElementById('shopOverlay');
+  if (shop && shop.classList.contains('active')) { closeProductPage(); return; }
+  const brain = document.getElementById('brainOverlay');
+  if (brain && brain.classList.contains('active')) {
+    // Chiudere il cervello con Esc = ignorarlo. Coerente con la satira.
+    ignoreBrain();
+  }
+});
+
 init();
 </script>
 </body>
