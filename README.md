@@ -9,7 +9,7 @@ L'obiettivo non è semplicemente "vincere", ma scoprire che tipo di finale merit
 Quando pubblicato con GitHub Pages, il gioco sarà disponibile a un link simile:
 
 ```text
-https://TUO-USERNAME.github.io/doomscroll/
+https://MerryDoThings.github.io/doom-scroll/
 ```
 
 ## Caratteristiche
@@ -31,41 +31,6 @@ https://TUO-USERNAME.github.io/doomscroll/
 3. **Quit Definitivo** — usi bene pochi aiuti, ascolti il cervello e cambi davvero rapporto col feed.
 4. **Brainrot™** — clicchi in modo compulsivo finché il linguaggio collassa.
 5. **Capitalismo Spirituale** — provi a salvarti cliccando troppi sponsor wellness.
-
-## Come pubblicarlo con GitHub Pages
-
-### 1. Crea una repository
-
-Vai su GitHub e crea una nuova repository pubblica, ad esempio:
-
-```text
-doomscroll
-```
-
-### 2. Carica i file
-
-Carica nella repository questi file:
-
-```text
-index.html
-README.md
-```
-
-Il file principale deve chiamarsi **index.html**, altrimenti GitHub Pages potrebbe non aprirlo automaticamente.
-
-### 3. Attiva GitHub Pages
-
-Nella repository:
-
-1. Vai su **Settings**
-2. Vai su **Pages**
-3. In **Build and deployment**, scegli:
-   - **Source:** Deploy from a branch
-   - **Branch:** main
-   - **Folder:** /root
-4. Salva
-
-Dopo qualche minuto GitHub mostrerà il link pubblico del sito.
 
 ## Sviluppo locale
 
