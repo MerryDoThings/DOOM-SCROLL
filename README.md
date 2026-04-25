@@ -9,8 +9,7 @@ L'obiettivo non è semplicemente "vincere", ma scoprire che tipo di finale merit
 Quando pubblicato con GitHub Pages, il gioco sarà disponibile a un link simile:
 
 ```text
-https://MerryDoThings.github.io/doom-scroll/
-```
+https://merrydothings.github.io/DOOM-SCROLL/```
 
 ## Caratteristiche
 
