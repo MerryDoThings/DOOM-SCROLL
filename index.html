@@ -101,36 +101,90 @@
   .brain-btn.listen:hover { background: var(--green-bg); }
   .brain-btn.ignore { border-color: var(--text-faint); color: var(--text-muted); }
   .brain-btn.ignore:hover { background: var(--red-bg); border-color: var(--red); color: var(--red); }
-  .ending-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px; overflow-y: auto; }
+  /* ── Ending overlay base ── */
+  .ending-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 200; padding: 24px 20px; overflow-y: auto; }
   .ending-overlay.active { display: flex; }
-  .ending-overlay.nirvana { background: #fefcf5; color: #555; text-align: center; flex-direction: column; animation: fadeIn 1.5s ease; }
-  .ending-overlay.nirvana .ending-emoji { font-size: 72px; margin-bottom: 16px; animation: bounce 2s infinite; }
-  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-  .ending-overlay.nirvana h1 { font-family: 'Times New Roman', serif; font-size: 28px; color: #b8a060; font-weight: normal; margin-bottom: 8px; letter-spacing: 0.1em; }
-  .ending-overlay.nirvana p { font-family: 'Times New Roman', serif; font-size: 16px; line-height: 1.7; max-width: 380px; margin: 8px auto; color: #807060; font-style: italic; }
-  .floating-emojis { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-  .floating-emojis span { position: absolute; font-size: 32px; animation: float linear infinite; }
-  @keyframes float { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
-  .ending-overlay.smetti { background: #1a1a1a; color: #ffffff; text-align: center; flex-direction: column; }
-  .ending-overlay.smetti h1 { font-size: 22px; font-weight: 500; margin-bottom: 16px; color: #e8e8e8; }
-  .ending-overlay.smetti p { font-size: 14px; line-height: 1.7; max-width: 380px; margin: 6px auto; color: #a8a8a8; }
-  .ending-overlay.cervello { background: #f5f3ee; color: #2a2a28; text-align: center; flex-direction: column; }
-  .ending-overlay.cervello h1 { font-family: 'Times New Roman', serif; font-size: 26px; font-weight: normal; margin-bottom: 16px; letter-spacing: 0.05em; color: #1a1a18; }
-  .ending-overlay.cervello p { font-family: 'Times New Roman', serif; font-size: 15px; line-height: 1.8; max-width: 380px; margin: 6px auto; color: #4a4a48; }
-  .ending-overlay.brainrot { background: #000; color: #f0f0f0; text-align: center; flex-direction: column; }
-  .ending-overlay.brainrot h1 { font-size: 36px; font-family: 'Courier New', monospace; color: #ff3030; margin-bottom: 16px; text-shadow: 3px 0 #00ffff, -3px 0 #ff00ff; animation: glitch3 0.5s infinite; }
-  .ending-overlay.brainrot p { font-size: 15px; font-family: 'Courier New', monospace; line-height: 1.5; max-width: 360px; margin: 4px auto; color: #d0d0d0; }
-  .ending-stats { margin: 24px auto 12px; padding: 12px; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; opacity: 0.6; max-width: 320px; font-size: 12px; font-family: 'Courier New', monospace; }
-  .ending-stats div { display: flex; justify-content: space-between; padding: 2px 0; }
-  .ending-progress { margin-top: 20px; font-size: 11px; font-family: 'Courier New', monospace; letter-spacing: 0.1em; opacity: 0.7; }
-  .ending-finals { font-size: 10px; margin-top: 6px; font-family: 'Courier New', monospace; letter-spacing: 0.05em; opacity: 0.5; line-height: 1.6; }
-  .ending-restart { margin-top: 24px; padding: 12px 28px; background: transparent; border: 1px solid currentColor; color: currentColor; cursor: pointer; font-size: 12px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 6px; transition: opacity 0.2s; }
-  .ending-restart:hover { opacity: 0.7; }
-  .ending-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
-  .ending-actions .ending-restart { margin-top: 0; }
-  .ending-share { padding: 12px 22px; background: transparent; border: 1px solid currentColor; color: currentColor; cursor: pointer; font-size: 12px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 6px; opacity: 0.85; transition: opacity 0.2s; }
-  .ending-share:hover { opacity: 1; }
-  .ending-share.copied { opacity: 0.5; }
+  .ending-inner { width: 100%; max-width: 420px; text-align: center; }
+
+  /* ── Stats block (shared, inherits color from parent) ── */
+  .ending-stats { margin: 28px auto 10px; padding: 12px 0; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; opacity: 0.55; max-width: 300px; font-size: 12px; font-family: 'Courier New', monospace; }
+  .ending-stats div { display: flex; justify-content: space-between; padding: 3px 0; }
+  .ending-progress { margin-top: 18px; font-size: 11px; font-family: 'Courier New', monospace; letter-spacing: 0.1em; opacity: 0.6; }
+  .ending-finals { font-size: 10px; margin-top: 5px; font-family: 'Courier New', monospace; letter-spacing: 0.04em; opacity: 0.45; line-height: 1.7; }
+  .ending-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+  .ending-restart, .ending-share { padding: 11px 24px; background: transparent; border: 1px solid currentColor; color: currentColor; cursor: pointer; font-size: 11px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 5px; transition: opacity 0.2s; }
+  .ending-restart:hover, .ending-share:hover { opacity: 0.65; }
+  .ending-share.copied { opacity: 0.4; }
+
+  /* ── NIRVANA — quasi vuoto, freddo, cinico ── */
+  .ending-overlay.ending-nirvana { background: #060606; color: #cccccc; flex-direction: column; animation: fadeIn 2s ease; }
+  .ending-nirvana .ending-inner { padding-top: 10vh; }
+  .ending-nirvana .e-label { font-size: 10px; font-family: 'Courier New', monospace; letter-spacing: 0.3em; color: #444; margin-bottom: 48px; }
+  .ending-nirvana .e-iq { font-size: 96px; font-family: 'Courier New', monospace; font-weight: 700; color: #222; line-height: 1; margin-bottom: 40px; }
+  .ending-nirvana .e-title { font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 0.25em; color: #555; margin-bottom: 32px; text-transform: uppercase; }
+  .ending-nirvana .e-body { font-size: 14px; line-height: 2; color: #888; max-width: 340px; margin: 0 auto; }
+  .ending-nirvana .e-body em { color: #555; font-style: normal; display: block; margin-top: 8px; }
+  .ending-nirvana .ending-stats { border-color: #222; }
+  .ending-nirvana .ending-restart, .ending-nirvana .ending-share { border-color: #333; color: #555; }
+
+  /* ── SMETTI — diagnosi cinica, clinical ── */
+  .ending-overlay.ending-smetti { background: #0f0f0f; color: #e0e0e0; flex-direction: column; }
+  .ending-smetti .ending-inner { text-align: left; }
+  .ending-smetti .e-label { font-size: 10px; font-family: 'Courier New', monospace; letter-spacing: 0.2em; color: #555; margin-bottom: 24px; }
+  .ending-smetti .e-title { font-size: 11px; font-family: 'Courier New', monospace; color: #666; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 28px; border-left: 2px solid #333; padding-left: 12px; }
+  .ending-smetti .e-step { font-size: 14px; color: #cccccc; line-height: 1.7; margin-bottom: 10px; padding-left: 20px; position: relative; }
+  .ending-smetti .e-step::before { content: '—'; position: absolute; left: 0; color: #444; }
+  .ending-smetti .e-step.dim { color: #555; }
+  .ending-smetti .e-conclusion { margin-top: 24px; font-size: 13px; font-family: 'Courier New', monospace; color: #444; border-top: 1px solid #222; padding-top: 16px; line-height: 1.8; }
+  .ending-smetti .e-conclusion strong { color: #e03535; font-weight: normal; }
+
+  /* ── QUIT — natura, pomposo, touch grass ── */
+  .ending-overlay.ending-quit { background: #070e07; color: #c8f0c8; flex-direction: column; }
+  .ending-quit .ending-inner { position: relative; padding-bottom: 20px; }
+  .ending-quit .e-label { font-size: 10px; font-family: 'Courier New', monospace; letter-spacing: 0.25em; color: #2a4a2a; margin-bottom: 20px; }
+  .ending-quit .e-title { font-size: 22px; font-family: 'Courier New', monospace; color: #4aff4a; letter-spacing: 0.08em; margin-bottom: 8px; text-shadow: 0 0 20px rgba(74,255,74,0.3); }
+  .ending-quit .e-subtitle { font-size: 11px; color: #3a6a3a; font-family: 'Courier New', monospace; letter-spacing: 0.15em; margin-bottom: 28px; }
+  .ending-quit .e-achievement { background: #0d1a0d; border: 1px solid #1a3a1a; border-radius: 8px; padding: 10px 16px; margin: 6px auto; max-width: 320px; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .ending-quit .e-achievement .e-icon { font-size: 18px; flex-shrink: 0; }
+  .ending-quit .e-achievement .e-ach-text { font-size: 12px; color: #88cc88; line-height: 1.4; }
+  .ending-quit .e-achievement .e-ach-title { font-size: 13px; color: #c8f0c8; font-weight: 600; }
+  .ending-quit .e-grass { margin: 24px auto 0; opacity: 0.35; }
+  .ending-quit .ending-stats { border-color: #1a3a1a; color: #4a8a4a; }
+  .ending-quit .ending-restart, .ending-quit .ending-share { border-color: #2a4a2a; color: #6ab06a; }
+
+  /* ── CAPITALISMO SPIRITUALE — wellness landing page ── */
+  .ending-overlay.ending-capitalismo { background: #faf5e8; color: #2a1a00; flex-direction: column; }
+  .ending-capitalismo .ending-inner { text-align: center; }
+  .ending-capitalismo .e-kicker { font-size: 10px; letter-spacing: 0.25em; color: #c8920a; font-family: 'Courier New', monospace; text-transform: uppercase; margin-bottom: 8px; }
+  .ending-capitalismo .e-logo { font-size: 28px; font-weight: 800; color: #1a0a00; letter-spacing: -0.02em; margin-bottom: 4px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .ending-capitalismo .e-tagline { font-size: 12px; color: #c8920a; margin-bottom: 20px; font-style: italic; }
+  .ending-capitalismo .e-stars { color: #d4a017; font-size: 18px; letter-spacing: 2px; margin-bottom: 6px; }
+  .ending-capitalismo .e-reviews { font-size: 11px; color: #8a6a30; margin-bottom: 20px; }
+  .ending-capitalismo .e-feature { font-size: 13px; color: #3a2a10; line-height: 1.7; padding: 6px 0; border-bottom: 1px solid #e8d8b0; max-width: 320px; margin: 0 auto; text-align: left; display: flex; gap: 10px; }
+  .ending-capitalismo .e-feature::before { content: '✓'; color: #c8920a; flex-shrink: 0; }
+  .ending-capitalismo .e-price-block { margin: 20px auto; max-width: 280px; background: #fff8e8; border: 1px solid #e8d0a0; border-radius: 12px; padding: 16px; }
+  .ending-capitalismo .e-price-old { font-size: 14px; color: #aaa; text-decoration: line-through; margin-bottom: 2px; }
+  .ending-capitalismo .e-price { font-size: 28px; font-weight: 800; color: #c8920a; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .ending-capitalismo .e-price-note { font-size: 10px; color: #8a6a30; margin-top: 2px; }
+  .ending-capitalismo .e-cta { display: block; width: 100%; max-width: 280px; margin: 12px auto 0; padding: 14px; background: #c8920a; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; cursor: default; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .ending-capitalismo .e-fine-print { font-size: 10px; color: #b0a080; margin-top: 8px; font-style: italic; }
+  .ending-capitalismo .ending-stats { border-color: #e8d0a0; color: #8a6a30; }
+  .ending-capitalismo .ending-restart, .ending-capitalismo .ending-share { border-color: #d4a040; color: #8a6a30; }
+
+  /* ── BRAINROT — chaos ── */
+  .ending-overlay.ending-brainrot { background: #000; color: #fff; flex-direction: column; overflow: hidden; position: relative; }
+  .ending-brainrot .ending-inner { position: relative; z-index: 2; }
+  .ending-brainrot .e-chaos { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+  .ending-brainrot .e-chaos span { position: absolute; font-family: 'Courier New', monospace; animation: brainrotFloat linear infinite; opacity: 0; white-space: nowrap; }
+  @keyframes brainrotFloat { 0% { opacity: 0; transform: translateY(0) rotate(var(--rot)); } 10% { opacity: 1; } 90% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-120vh) rotate(calc(var(--rot) + 20deg)); } }
+  .ending-brainrot .e-title { font-size: 11px; font-family: 'Courier New', monospace; letter-spacing: 0.3em; color: #ff3030; text-transform: uppercase; margin-bottom: 16px; animation: glitch2 2s infinite; }
+  .ending-brainrot .e-fragments { font-family: 'Courier New', monospace; line-height: 1.6; }
+  .ending-brainrot .e-frag { display: block; font-size: 14px; color: #ddd; margin: 3px 0; }
+  .ending-brainrot .e-frag.loud { font-size: 20px; color: #ff3030; text-shadow: 2px 0 #0ff, -2px 0 #f0f; animation: glitch3 0.8s infinite; font-weight: 700; }
+  .ending-brainrot .e-frag.dim { color: #555; font-size: 11px; }
+  .ending-brainrot .e-frag.mid { color: #ff9040; font-size: 16px; }
+  .ending-brainrot .ending-stats { border-color: #333; opacity: 0.4; }
+  .ending-brainrot .ending-restart, .ending-brainrot .ending-share { border-color: #ff3030; color: #ff3030; }
 
   .news-comment { margin-top: 9px; padding-top: 8px; border-top: 1px solid #1e1e1e; font-size: 11px; color: #707070; line-height: 1.35; font-family: 'Courier New', monospace; }
   .news-card.brainrot-news { border-color: #ff3030; box-shadow: 0 0 0 1px rgba(255,48,48,.15); animation: fadeUp 0.3s ease, glitch2 1.2s infinite; }
@@ -936,11 +990,11 @@ function checkEndings() {
 function buildShareText(type) {
   const t = timeStr(seconds);
   const teasers = {
-    nirvana: `🧘 NIRVANA RAGGIUNTO in ${t}. QI: 0/100. Ho trasceso anche la grammatica. Provalo:`,
-    smetti: `Ho chiuso l'app dopo ${t}. Il cervello me l'aveva chiesto tre volte. Provalo:`,
-    quit: `QUIT DEFINITIVO sbloccato in ${t}. Pare che il mondo continui anche senza aggiornarlo. Provalo:`,
-    capitalismo: `💸 CAPITALISMO SPIRITUALE: ho comprato la mia pace interiore in 5 rate. Funziona. Provalo:`,
-    brainrot: `💀 BRAINROT™ in ${t}. tung tung tung sahur. Provalo:`
+    nirvana: `QI: 0/100. non è pace, è assenza. la differenza non si sente da dentro. in ${t}. Provalo:`,
+    smetti: `ho chiuso l'app. ho annaffiato la pianta. ho ripreso il telefono. punto a capo. (${t}) Provalo:`,
+    quit: `QUIT DEFINITIVO in ${t}. ho finito una cosa. ho dormito. ho chiamato qualcuno. pare si possa fare. Provalo:`,
+    capitalismo: `ho risolto il doomscrolling comprando 5 prodotti per smettere il doomscrolling. la pace ha un piano annuale. Provalo:`,
+    brainrot: `BRAINROT™ in ${t}. sigma. no cap. ratio. il feed ha vinto. fr fr. Provalo:`
   };
   const line = teasers[type] || `DOOM/SCROLL — un feed che vuole il tuo QI. Provalo:`;
   return `${line}\n${window.location.href}`;
@@ -982,36 +1036,170 @@ function triggerEnding(type) {
   if (gameOver) return;
   gameOver = true;
   document.getElementById('brainOverlay').classList.remove('active');
+
   const ALL = ['nirvana','smetti','quit','brainrot','capitalismo'];
-  const NAMES = { nirvana:'Nirvana', smetti:'Smetti davvero', quit:'Quit definitivo', brainrot:'Brainrot™', capitalismo:'Capitalismo spirituale' };
+  const NAMES = { nirvana:'Nirvana', smetti:'Smetti davvero', quit:'Quit definitivo', brainrot:'Brainrot\u2122', capitalismo:'Capitalismo spirituale' };
   unlockFinal(type);
   const unlocked = getUnlocked();
-  const finalsList = ALL.map(f => unlocked.includes(f) ? '✓ ' + NAMES[f] : '🔒 ???').join('  ·  ');
+  const finalsList = ALL.map(f => unlocked.includes(f) ? '\u2713 ' + NAMES[f] : '\uD83D\uDD12 ???').join('  \u00b7  ');
+
   const overlay = document.getElementById('endingOverlay');
-  overlay.className = 'ending-overlay active ' + (type === 'quit' ? 'smetti' : type === 'capitalismo' ? 'cervello' : type);
-  const stats = `<div class="ending-stats"><div><span>tempo perso</span><span>${timeStr(seconds)}</span></div><div><span>QI finale</span><span>${iq}/100</span></div><div><span>cose viste</span><span>${newsCount}</span></div><div><span>cervello ascoltato</span><span>${brainListened}x</span></div><div><span>cervello ignorato</span><span>${brainIgnored}x</span></div><div><span>annunci cliccati</span><span>${adClicks}x</span></div></div><div class="ending-progress">finale ${unlocked.length} di 5 sbloccato</div><div class="ending-finals">${finalsList}</div><div class="ending-actions"><button class="ending-share" onclick="shareEnding('${type}', this)">condividi</button><button class="ending-restart" onclick="restartGame()">ricomincia</button></div>`;
-  let html = '';
+  overlay.className = 'ending-overlay active ending-' + type;
+
+  // Blocco statistiche condiviso — eredita i colori dal tema del finale
+  const stats = `
+    <div class="ending-stats">
+      <div><span>tempo perso</span><span>${timeStr(seconds)}</span></div>
+      <div><span>qi finale</span><span>${iq}/100</span></div>
+      <div><span>cose viste</span><span>${newsCount}</span></div>
+      <div><span>cervello ascoltato</span><span>${brainListened}x</span></div>
+      <div><span>cervello ignorato</span><span>${brainIgnored}x</span></div>
+      <div><span>annunci cliccati</span><span>${adClicks}x</span></div>
+    </div>
+    <div class="ending-progress">finale ${unlocked.length} di 5 sbloccato</div>
+    <div class="ending-finals">${finalsList}</div>
+    <div class="ending-actions">
+      <button class="ending-share" onclick="shareEnding('${type}', this)">condividi</button>
+      <button class="ending-restart" onclick="restartGame()">ricomincia</button>
+    </div>`;
+
+  // ── NIRVANA ────────────────────────────────────────────────────────────────
   if (type === 'nirvana') {
-    html = `<div class="floating-emojis" id="floatingEmojis"></div><div class="ending-emoji">🧘</div><h1>NIRVANA RAGGIUNTO</h1><p>il tuo QI è zero ✨</p><p>Hai raggiunto la pace perché non hai più strumenti per distinguere pace e resa.</p><p>non sai più preoccuparti di nulla. né del clima, né del lavoro, né del fatto che hai dimenticato il forno acceso da ieri sera 🌸</p><p>hai trasceso il pensiero. hai trasceso anche la grammatica. comunichi solo per emoji ora 🌼</p>${stats}`;
-    overlay.innerHTML = html;
-    spawnEmojis();
+    overlay.innerHTML = `
+      <div class="ending-inner">
+        <div class="e-label">FINE CORSA</div>
+        <div class="e-iq">0</div>
+        <div class="e-title">QI RESIDUO</div>
+        <div class="e-body">
+          non hai vinto contro il feed.<br>
+          hai smesso di avere strumenti per combatterlo.<br>
+          <em>la differenza non si sente da dentro.</em>
+          <br><br>
+          hai raggiunto uno stato che alcune app di meditazione<br>
+          vendono a 9,99 al mese.<br>
+          <em>tu ci sei arrivato gratis, per caso, scrollando.</em>
+          <br><br>
+          la pace che senti adesso non \xe8 tua.<br>
+          \xe8 assenza.
+        </div>
+        ${stats}
+      </div>`;
     playZenSound();
+
+  // ── SMETTI ─────────────────────────────────────────────────────────────────
   } else if (type === 'smetti') {
-    html = `<h1>Hai chiuso l'app.</h1><p>Il cervello te l’ha ricordato tre volte. Alla terza, incredibilmente, non hai negoziato con il bottone.</p><p>Sei andato a bere un bicchiere d'acqua. Hai aperto la finestra. Hai annaffiato la pianta che stava morendo da settimane.</p><p>Non hai vinto contro internet. Hai solo lasciato la stanza prima che internet iniziasse il secondo tempo.</p><p style="margin-top:20px;color:#888;">Niente di magico. Solo vita normale.</p>${stats}`;
-    overlay.innerHTML = html;
+    overlay.innerHTML = `
+      <div class="ending-inner">
+        <div class="e-label">// DIAGNOSI — REV. ${Math.floor(seconds/60)+1}</div>
+        <div class="e-title">hai chiuso l'app.</div>
+        <div class="e-step">hai bevuto un bicchiere d'acqua.</div>
+        <div class="e-step">hai aperto la finestra.</div>
+        <div class="e-step">hai guardato fuori per circa 40 secondi.</div>
+        <div class="e-step">hai annaffiato la pianta che stava morendo da settimane.</div>
+        <div class="e-step">hai risposto a un messaggio che aspettava da ieri.</div>
+        <div class="e-step dim">hai pensato: "ecco, cos'\xe8 difficile in questo?"</div>
+        <div class="e-step dim">hai preso il telefono per vedere l'ora.</div>
+        <div class="e-step dim">hai aperto l'app.</div>
+        <div class="e-conclusion">
+          non \xe8 una ricaduta.<br>
+          \xe8 la sequenza normale.<br>
+          <strong>punto a capo.</strong>
+        </div>
+        ${stats}
+      </div>`;
+
+  // ── QUIT DEFINITIVO ────────────────────────────────────────────────────────
   } else if (type === 'quit') {
-    html = `<h1>QUIT DEFINITIVO</h1><p>Hai chiuso l’app. Poi hai chiuso le notifiche. Poi hai disinstallato tre app che ti chiamavano “utente attivo mensile”.</p><p>Nei giorni dopo hai scoperto una cosa inquietante: il mondo continua anche se non lo aggiorni ogni 7 minuti.</p><p>Hai dormito. Hai risposto ai messaggi. Hai finito una cosa iniziata.</p><p>Non sei diventato una persona migliore. Sei diventato una persona meno interrotta.</p><p style="margin-top:20px;font-weight:500;">Questa, a quanto pare, era già una forma di superpotere.</p>${stats}`;
-    overlay.innerHTML = html;
+    overlay.innerHTML = `
+      <div class="ending-inner">
+        <div class="e-label">// OBIETTIVI SBLOCCATI</div>
+        <div class="e-title">QUIT DEFINITIVO</div>
+        <div class="e-subtitle">hai fatto cose che non richiedevano una connessione</div>
+        <div class="e-achievement"><span class="e-icon">\uD83D\uDCD6</span><div><div class="e-ach-title">hai finito una cosa iniziata</div><div class="e-ach-text">raro. documentato raramente. apparentemente possibile.</div></div></div>
+        <div class="e-achievement"><span class="e-icon">\uD83E\uDEDF</span><div><div class="e-ach-title">hai dormito</div><div class="e-ach-text">non per stanchezza da scroll. per scelta.</div></div></div>
+        <div class="e-achievement"><span class="e-icon">\uD83E\uDD42</span><div><div class="e-ach-title">hai chiamato qualcuno</div><div class="e-ach-text">una conversazione senza notifiche nel mezzo. durata: intera.</div></div></div>
+        <div class="e-achievement"><span class="e-icon">\uD83D\uDCF5</span><div><div class="e-ach-title">hai messo gi\xf9 il telefono</div><div class="e-ach-text">e non lo hai ripreso per ${Math.max(3, Math.floor(seconds/60))} minuti.</div></div></div>
+        <svg class="e-grass" width="320" height="48" viewBox="0 0 320 48" fill="none">
+          ${Array.from({length:32}, (_,i) => {
+            const x = i*10+5, h2 = 18+Math.sin(i*1.7)*10, w = 2+Math.random()*2;
+            return `<rect x="${x}" y="${48-h2}" width="${w}" height="${h2}" rx="1" fill="#1a4a1a" opacity="${0.4+Math.random()*0.4}"/>`;
+          }).join('')}
+        </svg>
+        ${stats}
+      </div>`;
+
+  // ── CAPITALISMO SPIRITUALE ─────────────────────────────────────────────────
   } else if (type === 'capitalismo') {
-    html = `<h1>CAPITALISMO SPIRITUALE</h1><p>Hai sconfitto il doomscrolling.</p><p>Non chiudendo l’app. Non andando a dormire. Non ascoltando davvero il tuo cervello.</p><p>Hai risolto il problema comprando: una app, un corso, un ritiro, un planner e un abbonamento annuale con rinnovo automatico.</p><p>Ora non scrolli più per ansia. Scrolli per confrontare metodi per non scrollare.</p><p style="margin-top:20px;font-weight:500;">Il tuo QI è salvo. Il tuo conto no.</p><p style="font-size:13px;opacity:.72;">La tua pace interiore ora ha una dashboard.</p>${stats}`;
-    overlay.innerHTML = html;
+    overlay.innerHTML = `
+      <div class="ending-inner">
+        <div class="e-kicker">\u2728 SOLUZIONE CERTIFICATA \u2728</div>
+        <div class="e-logo">MindFlow\u2122 Pro</div>
+        <div class="e-tagline">la tua pace interiore, ora con dashboard</div>
+        <div class="e-stars">\u2605\u2605\u2605\u2605\u2605</div>
+        <div class="e-reviews">4.9 · 12.847 recensioni verificate</div>
+        <div class="e-feature">hai smesso di scrollare comprando cinque prodotti per smettere di scrollare</div>
+        <div class="e-feature">il problema \xe8 risolto. il problema \xe8 in abbonamento annuale</div>
+        <div class="e-feature">non ascolti pi\xf9 il feed. ascolti i podcast sul non ascoltare il feed</div>
+        <div class="e-feature">la tua ansia ora \xe8 ottimizzata e ha un nome di prodotto</div>
+        <div class="e-price-block">
+          <div class="e-price-old">€ 149,99 / anno</div>
+          <div class="e-price">€ 9,99 <span style="font-size:14px;font-weight:400">/mese</span></div>
+          <div class="e-price-note">rinnovo automatico · annulla quando vuoi · non annullerai</div>
+        </div>
+        <button class="e-cta">CONTINUA IL TUO PERCORSO \u2192</button>
+        <div class="e-fine-print">il tuo qi \xe8 salvo. il tuo conto no. la pace interiore non \xe8 rimborsabile.</div>
+        ${stats}
+      </div>`;
+
+  // ── BRAINROT ───────────────────────────────────────────────────────────────
   } else if (type === 'brainrot') {
-    html = `<h1>BRAINROT™</h1><p>Hai cliccato troppo velocemente.</p><p>Il feed non riesce più a produrre significato. Ora produce solo stimoli.</p><p style="margin-top:16px;">uomo fa cosa<br>esperto dice boh<br>internet arrabbiato<br>guarda questo<br>ancora<br>ANCORA</p><p style="margin-top:20px;font-size:22px;line-height:1.6;">TUNG TUNG TUNG SAHUR<br>TRALALERO TRALALÀ<br>BRR BRR PATAPIM<br>BALLERINA CAPPUCCINA<br>BOMBARDIRO CROCODILO</p><p style="margin-top:20px;">Il tuo cervello non legge più. Riconosce solo pattern.</p><p>La frase lunga è morta. Viva il suono.</p><p style="margin-top:16px;font-size:24px;">💀</p>${stats}`;
-    overlay.innerHTML = html;
+    const CHAOS_TERMS = [
+      'SIGMA','no cap','W rizz','ratio','L+ratio','Ohio','only in ohio',
+      'NPC','main character','it\'s giving','understood the assignment',
+      'aura farming','gigachad','touch grass','caught in 4K','fr fr',
+      'gyatt','skibidi','rizz','slay','based','lowkey','highkey',
+      'pov:','bussin','sus','glizzy','rent free','understood',
+      '\u{1F480}','\u{1F525}','\u{1F4AF}','\u26A1','\u{1F921}','\u{1F9E0}',
+      'TUNG','brrr','tralalà','sigma grindset','only in ohio',
+    ];
+    const chaosItems = Array.from({length: 28}, (_, i) => {
+      const term = CHAOS_TERMS[Math.floor(Math.random()*CHAOS_TERMS.length)];
+      const size = 9 + Math.floor(Math.random()*16);
+      const x = Math.random()*90;
+      const delay = Math.random()*8;
+      const dur = 6 + Math.random()*10;
+      const rot = (Math.random()*40-20).toFixed(0);
+      const color = ['#ff3030','#ff9040','#ffffff','#00ffff','#ff00ff','#ffff00'][Math.floor(Math.random()*6)];
+      return `<span style="left:${x}%;top:${70+Math.random()*30}%;font-size:${size}px;color:${color};--rot:${rot}deg;animation-delay:${delay}s;animation-duration:${dur}s">${term}</span>`;
+    }).join('');
+
+    overlay.innerHTML = `
+      <div class="e-chaos">${chaosItems}</div>
+      <div class="ending-inner">
+        <div class="e-title">BRAINROT\u2122 CERTIFICATO</div>
+        <div class="e-fragments">
+          <span class="e-frag dim">hai cliccato troppo velocemente per</span>
+          <span class="e-frag loud">SIGMA</span>
+          <span class="e-frag">il feed non riesce più a produrre significato.</span>
+          <span class="e-frag dim">ora produce solo</span>
+          <span class="e-frag mid">stimoli. pattern. loop.</span>
+          <span class="e-frag dim">uomo fa cosa —</span>
+          <span class="e-frag">internet arrabbiato —</span>
+          <span class="e-frag dim">esperto dice boh —</span>
+          <span class="e-frag loud">W RIZZ</span>
+          <span class="e-frag">la frase lunga è morta.</span>
+          <span class="e-frag mid">il titolo basta.</span>
+          <span class="e-frag dim">il titolo è tutto.</span>
+          <span class="e-frag loud">NO CAP FR FR</span>
+          <span class="e-frag dim">il cervello non legge più.</span>
+          <span class="e-frag">riconosce solo pattern.</span>
+          <span class="e-frag loud">RATIO</span>
+        </div>
+        ${stats}
+      </div>`;
     playGlitchSound();
   }
 }
-
 function playZenSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1045,20 +1233,6 @@ function playGlitchSound() {
     }
   } catch(e) {}
 }
-function spawnEmojis() {
-  const emojis = ['🌸','🧘','✨','🌼','🕉️','🪷','💆','☮️','🌿'];
-  const container = document.getElementById('floatingEmojis');
-  for (let i = 0; i < 25; i++) {
-    const span = document.createElement('span');
-    span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-    span.style.left = Math.random()*100 + '%';
-    span.style.animationDuration = (4 + Math.random()*5) + 's';
-    span.style.animationDelay = (Math.random()*3) + 's';
-    span.style.fontSize = (24 + Math.random()*32) + 'px';
-    container.appendChild(span);
-  }
-}
-
 function resetStateForNewRun() {
   iq = 100; minIQ = 100; seconds = 0; newsCount = 0;
   brainListened = 0; brainListenedStreak = 0; brainIgnored = 0; everIgnored = false;
