@@ -61,12 +61,6 @@
   .news-card.lercio .news-src { color: #c8920a; letter-spacing: 0.12em; }
   .news-card.lercio .news-tag { background: #1e1800; color: #c8920a; border-color: #2e2400; }
   .news-card.lercio::before { content: 'SATIRA'; display: inline-block; font-size: 9px; font-family: 'Courier New', monospace; color: #c8920a; background: #2a1e00; border: 1px solid #3a2c00; border-radius: 3px; padding: 1px 5px; letter-spacing: 0.12em; margin-bottom: 7px; }
-  .meta-card { background: #0f0f18; border: 1px solid #2a2a4a; border-left: 2px solid #6060cc; border-radius: 10px; padding: 14px; margin-bottom: 10px; animation: fadeUp 0.3s ease; }
-  .meta-card-label { font-size: 9px; color: #7070cc; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 7px; }
-  .meta-card-body { font-size: 13px; color: #d0d0f0; line-height: 1.55; }
-  .meta-card-stat { font-size: 18px; font-weight: 700; color: #9090ff; font-family: 'Courier New', monospace; margin: 8px 0 4px; }
-  .meta-card-note { font-size: 11px; color: #7070aa; margin-top: 8px; font-style: italic; }
-  .meta-card-outro { font-size: 13px; color: #a0a0e0; margin-top: 10px; line-height: 1.55; font-style: italic; }
   .promo-card { background: linear-gradient(135deg, #21180b 0%, #1a1a1a 58%, #17100c 100%); border: 1px dashed #b9822d; border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; animation: fadeUp 0.3s ease; box-shadow: 0 0 0 1px rgba(185,130,45,.12); }
   .promo-card::before { content: 'SPONSOR WELLNESS / TRAPPOLA DI LUCIDITÀ'; display: block; font-size: 10px; color: #d8bd77; letter-spacing: .16em; font-family: 'Courier New', monospace; margin-bottom: 7px; opacity: .9; }
   .promo-card:hover { border-color: #666; }
@@ -344,13 +338,34 @@ function updateIQDisplay() {
   if (newStage && newStage !== lastStage) {
     if (lastStage !== '') {
       const stageMsgs = {
-        'lievemente intontito': 'sei ufficialmente lievemente intontito. ben arrivato.',
-        'mente plastificata': 'mente plastificata. il cartone si curva, non si spezza.',
-        'vuoto cosmico': 'vuoto cosmico raggiunto. la stanza intorno è facoltativa.',
-        'proto-nirvana': 'proto-nirvana. il pollice continua per inerzia spirituale.',
-        'nirvana': 'nirvana. non legge più nemmeno questo toast.'
+        'lievemente intontito': [
+          'sei ufficialmente lievemente intontito. ben arrivato.',
+          'lievemente intontito. il danno è contenuto. per ora.',
+          'transizione completata: cosciente → intontito. il feed ha preso nota.',
+        ],
+        'mente plastificata': [
+          'mente plastificata. il cartone si curva, non si spezza.',
+          'mente plastificata. ora le notizie scivolano dentro senza attrito.',
+          'mente plastificata. il feed ti trova finalmente gestibile.',
+        ],
+        'vuoto cosmico': [
+          'vuoto cosmico raggiunto. la stanza intorno è facoltativa.',
+          'vuoto cosmico. i pensieri ci sono ancora, ma non insistono.',
+          'vuoto cosmico. hai trovato il modo più moderno per meditare.',
+        ],
+        'proto-nirvana': [
+          'proto-nirvana. il pollice continua per inerzia spirituale.',
+          'proto-nirvana. tecnicamente sei ancora sveglio.',
+          'proto-nirvana. a questo punto il feed scorre da solo.',
+        ],
+        'nirvana': [
+          'nirvana. non legge più nemmeno questo toast.',
+          'nirvana. il feed ha vinto. il feed ti ringrazia.',
+          'nirvana. nessun pensiero è stato disturbato in questa sessione.',
+        ],
       };
-      if (stageMsgs[newStage]) showToast(stageMsgs[newStage], 'bad');
+      const variants = stageMsgs[newStage];
+      if (variants) showToast(variants[Math.floor(Math.random()*variants.length)], 'bad');
     }
     lastStage = newStage;
   }
@@ -369,12 +384,32 @@ function updateIQ(delta, reason='') {
   checkEndings();
 }
 
+// Messaggi per lo scroll volontario (cliccare "carica altro").
+// Ruotano in ordine così non si ripetono subito, con shuffle iniziale.
+const SCROLL_REASONS = [
+  'scelta consapevole di continuare',
+  'il pollice ha deciso prima del cervello',
+  'momentum scrolling rilevato',
+  'curiosità irrisolta, costo pagato',
+  'un altro carico, un altro taglio',
+  'scroll volontario — la responsabilità è tua',
+  'nessuno ti ha obbligato. questo è il problema.',
+  'hai scelto il feed invece dell\'alternativa',
+  'azione muscolare non supportata da intenzione',
+  'click effettuato, danno applicato',
+].sort(() => Math.random() - 0.5);
+let scrollReasonIdx = 0;
+
 function spendScrollIQ() {
   // Media: -1.5 QI per carica altro. Abbastanza lenta da sembrare innocua, abbastanza forte da contare.
   scrollLossDebt += 1.5;
   const loss = Math.floor(scrollLossDebt);
   scrollLossDebt -= loss;
-  if (loss > 0) updateIQ(-loss, loss === 1 ? 'scroll intenzionale, minuscolo taglio' : 'scroll intenzionale, due tagli piccoli');
+  if (loss > 0) {
+    const reason = SCROLL_REASONS[scrollReasonIdx % SCROLL_REASONS.length];
+    scrollReasonIdx++;
+    updateIQ(-loss, reason);
+  }
 }
 
 function promoConfirmMessage(purchaseNumber, step, required) {
@@ -413,67 +448,17 @@ function addLercioCard() {
   if (!LERCIO_NEWS || LERCIO_NEWS.length === 0) { addNewsCard(); return; }
   const [item] = pickItem(LERCIO_NEWS, lercioUsed);
   const [hl, tag] = item;
-  const time = TIMES[Math.floor(Math.random()*TIMES.length)];
   const src = SOURCES[Math.floor(Math.random()*SOURCES.length)];
+  const time = TIMES[Math.floor(Math.random()*TIMES.length)];
   const div = document.createElement('div');
   div.className = 'news-card lercio';
   div.innerHTML = `<div class="news-src">${src}</div><div class="news-hl">${escapeHtml(hl)}</div><div class="news-meta"><span class="news-tag">${escapeHtml(tag)}</span><span class="news-time">${time}</span></div>`;
-  div.style.cursor = 'pointer';
-  let clicked = false;
-  div.onclick = () => {
-    if (clicked || gameOver) return;
-    clicked = true;
-    div.style.cursor = 'default';
-    updateIQ(1, 'satira riconosciuta come satira — raro evento neurologico');
-    showToast('+1 QI: hai distinto satira da realtà. sei nel 23% della popolazione.', 'good');
-  };
   feed.appendChild(div);
   newsCount++;
   document.getElementById('newsCount').textContent = newsCount;
   cardsSinceInterruption++;
 }
 
-let metaCardShown = false;
-const META_STATS = [
-  {
-    label: 'MOMENTO DI ONESTÀ NON RICHIESTO',
-    intro: 'alcune notizie che stai leggendo sono satira certificata.\nsono false per definizione. è scritto dappertutto.',
-    stat: '77%',
-    body: 'degli italiani le condivide credendoci davvero.',
-    outro: 'il feed non le segnalerà mai.\nsei nel 77%?'
-  },
-  {
-    label: 'COMUNICATO DALLA REDAZIONE',
-    intro: 'alcune notizie qui dentro vengono da un sito satirico.\nnon sono vere. non sono mai state vere.',
-    stat: '64%',
-    body: 'degli utenti non apre l\'articolo prima di commentarlo.',
-    outro: 'il titolo basta a formarsi un\'opinione.\nstai usando il titolo?'
-  },
-  {
-    label: 'AVVISO DI SERVIZIO',
-    intro: 'questo feed mescola notizie reali e satira.\nil tuo cervello probabilmente non nota la differenza.',
-    stat: '59%',
-    body: 'dei titoli satirici vengono creduti veri da chi li legge.',
-    outro: 'il feed non dirà mai quali sono le false.\nbuona fortuna.'
-  },
-  {
-    label: 'INTERRUZIONE TEMPORANEA DI PROGRAMMA',
-    intro: 'alcune notizie che hai già scrollato erano satira.\nhai notato qualcosa di strano?',
-    stat: '1 su 3',
-    body: 'delle notizie in un feed generico è falsa, fuorviante o fuori contesto.',
-    outro: 'il feed continuerà come se nulla fosse.\nanche tu, probabilmente.'
-  },
-];
-
-function addMetaCard() {
-  if (metaCardShown || gameOver) return;
-  metaCardShown = true;
-  const s = META_STATS[Math.floor(Math.random() * META_STATS.length)];
-  const div = document.createElement('div');
-  div.className = 'meta-card';
-  div.innerHTML = `<div class="meta-card-label">▸ ${s.label}</div><div class="meta-card-body">${s.intro.replace(/\n/g,'<br>')}</div><div class="meta-card-stat">${s.stat}</div><div class="meta-card-body">${s.body}</div><div class="meta-card-outro">${s.outro.replace(/\n/g,'<br>')}</div>`;
-  feed.appendChild(div);
-}
 
 function addAdCard() {
   // Classi DOM senza 'ad': gli ad blocker possono nascondere elementi chiamati ad-card.
@@ -742,14 +727,43 @@ function addLoadMore() {
 
 function setBrainrotButton(btn) {
   const n = recentLoadClicks.length;
-  let level = 0, label = '↓ carica altro (sì, davvero)';
-  if (n >= 25) { level = 4; label = '↓ TUNG TUNG TUNG'; }
-  else if (n >= 20) { level = 3; label = '↓ tung?'; }
-  else if (n >= 15) { level = 2; label = '↓ ANCORA'; }
-  else if (n >= 10) { level = 1; label = '↓ ancora uno'; }
+  let level = 0;
+
+  // Testo che degenera su due assi:
+  // - totalLoadMore: quante volte hai caricato in totale (stanchezza)
+  // - recentLoadClicks: quanto velocemente stai cliccando (brainrot acuto)
+  // Le due scale si sommano — chi clicca in fretta degrada più in fretta.
+
+  // Asse brainrot acuto (click ravvicinati)
+  if (n >= 25) level = 4;
+  else if (n >= 20) level = 3;
+  else if (n >= 15) level = 2;
+  else if (n >= 10) level = 1;
+
+  // Asse stanchezza cronica (totalLoadMore) — si accumula più lentamente
+  let chronLevel = 0;
+  if (totalLoadMore >= 20) chronLevel = 4;
+  else if (totalLoadMore >= 14) chronLevel = 3;
+  else if (totalLoadMore >= 9) chronLevel = 2;
+  else if (totalLoadMore >= 5) chronLevel = 1;
+
+  const effectiveLevel = Math.max(level, chronLevel);
   brainrotLevel = Math.max(brainrotLevel, level);
+
+  // Scala del testo: da verboso e ironico a silenzio totale
+  const labels = [
+    '↓ carica altro (sì, davvero)',   // 0 — inizio, tono sarcastico
+    '↓ un altro po\'',                // 1 — ancora ragionevole
+    '↓ ancora',                       // 2 — si semplifica
+    '↓ dai',                          // 3 — richiesta
+    '↓ pls',                          // 4 — supplica
+  ];
+
+  // Livello 4 massimo: testo sparisce, rimane solo la freccia
+  const label = effectiveLevel >= 4 ? '↓' : labels[Math.min(effectiveLevel, labels.length - 1)];
+
   btn.textContent = label;
-  btn.className = 'load-more' + (level ? ' glitch-' + Math.min(level,3) : '');
+  btn.className = 'load-more' + (effectiveLevel ? ' glitch-' + Math.min(effectiveLevel, 3) : '');
 }
 
 function onLoadMore(btn, event) {
@@ -778,14 +792,19 @@ function onLoadMore(btn, event) {
     const newsToAdd = 6 + Math.floor(Math.random()*2);
     const mustShowAd = adsShown < 4 || loadsSinceAd >= 2;
     const mustShowQuiz = totalLoadMore <= 3 || (totalLoadMore % 2 === 0);
-    // Lercio appare ogni 3 load circa, in posizione casuale tra le notizie.
-    const showLercio = LERCIO_NEWS.length > 0 && totalLoadMore % 3 === 0;
+    // Lercio: più spesso man mano che il QI cala.
+    // Sopra 60 è raro (ogni 5 load), sotto 40 è frequente (ogni 2), sotto 20 quasi garantito.
+    // Narrativamente: il cervello che degrada smette di distinguere satira da realtà.
+    let lercioFreq;
+    if (iq >= 60) lercioFreq = 5;
+    else if (iq >= 40) lercioFreq = 3;
+    else if (iq >= 20) lercioFreq = 2;
+    else lercioFreq = 1;
+    const showLercio = LERCIO_NEWS.length > 0 && totalLoadMore % lercioFreq === 0;
     const lercioAt = showLercio ? 1 + Math.floor(Math.random()*4) : -1;
     for (let i = 0; i < newsToAdd; i++) {
       if (i === lercioAt) {
         addLercioCard();
-        // Prima card Lercio → mostra subito la meta card disclaimer, una volta sola
-        if (!metaCardShown) addMetaCard();
       } else {
         addNewsCard(brainrotLevel >= 3 && i === newsToAdd-1);
       }
@@ -807,13 +826,53 @@ function onLoadMore(btn, event) {
 function showBrainPopup() {
   if (gameOver) return;
   let msg;
+
   if (brainIgnored > 0) {
     const idx = Math.min(brainIgnored - 1, BRAIN_IGNORE_MSGS.length - 1);
     msg = BRAIN_IGNORE_MSGS[idx];
   } else {
-    let idx = brainListened + brainIgnored;
-    if (idx >= BRAIN_MSGS.length) idx = BRAIN_MSGS.length - 1;
-    msg = BRAIN_MSGS[idx];
+    const brainByPhase = {
+      high: [
+        'hey. stai ancora bene. puoi ancora smettere.',
+        'questo è il momento migliore per chiudere.',
+        'il feed non ha ancora vinto. ancora.',
+        'hai aperto per due minuti. due minuti sono passati.',
+        'nota: potresti fare altro. nota ricevuta?',
+      ],
+      mid: [
+        'sei qui da un po\'. il feed lo sa.',
+        'stai ancora decidendo tu quando fermarti?',
+        'il pensiero che stavi evitando è ancora lì.',
+        'ogni notizia promette la prossima importante.',
+        'la prossima non sarà più importante. ma continuerai.',
+      ],
+      low: [
+        'fermati. adesso. non tra poco.',
+        'il danno si vede. il feed non se ne preoccupa.',
+        'sei ancora capace di decidere. usalo.',
+        'questo non è informarsi. sai che non è informarsi.',
+        'posso aiutarti solo se mi ascolti.',
+      ],
+      critical: [
+        'sono ancora qui.',
+        'puoi ancora smettere. anche adesso.',
+        'non ti giudico. smetti.',
+        'non ricordi nemmeno cosa stavi cercando.',
+        'ti ricordo che esisto.',
+      ],
+    };
+    let pool;
+    if (iq >= 70) pool = brainByPhase.high;
+    else if (iq >= 40) pool = brainByPhase.mid;
+    else if (iq >= 20) pool = brainByPhase.low;
+    else pool = brainByPhase.critical;
+    if (BRAIN_MSGS.length > 0 && Math.random() < 0.35) {
+      let idx = brainListened + brainIgnored;
+      if (idx >= BRAIN_MSGS.length) idx = BRAIN_MSGS.length - 1;
+      msg = BRAIN_MSGS[idx];
+    } else {
+      msg = pool[Math.floor(Math.random() * pool.length)];
+    }
   }
 
   const listenBtn = document.querySelector('.brain-btn.listen');
@@ -827,14 +886,13 @@ function showBrainPopup() {
       ignoreBtn.textContent = 'ancora 5 minuti';
     } else {
       listenBtn.textContent = 'ok smetto';
-      ignoreBtn.textContent = 'tra un po’';
+      ignoreBtn.textContent = 'tra un po\u2019';
     }
   }
 
   document.getElementById('brainMsg').textContent = msg;
   document.getElementById('brainOverlay').classList.add('active');
 }
-
 function listenBrain() {
   document.getElementById('brainOverlay').classList.remove('active');
   brainListened++;
@@ -1007,7 +1065,8 @@ function resetStateForNewRun() {
   cardsSinceInterruption = 0; recentLoadClicks = []; gameOver = false; totalLoadMore = 0;
   adClicks = 0; usefulAdClicks = 0; spiritualDebt = 0; adsShown = 0; loadsSinceAd = 0; brainrotLevel = 0; doubleClickStreak = 0; lastLoadClickAt = 0; scrollLossDebt = 0; interruptionCount = 0;
   mehUsed = []; intUsed = []; peakUsed = []; adUsed = []; quizUsed = []; brainrotUsed = []; lercioUsed = [];
-  metaCardShown = false;
+  scrollReasonIdx = 0;
+  passiveReasonIdx = 0;
   lastStage = '';
   feed.innerHTML = '';
   document.getElementById('endingOverlay').className = 'ending-overlay';
@@ -1042,7 +1101,11 @@ function init() {
     if (gameOver) return;
     seconds++;
     document.getElementById('timerVal').textContent = timeStr(seconds);
-    if (seconds % 16 === 0) updateIQ(-1, 'esposizione passiva al nulla, goccia dopo goccia');
+    if (seconds % 16 === 0) {
+      const reason = PASSIVE_REASONS[passiveReasonIdx % PASSIVE_REASONS.length];
+      passiveReasonIdx++;
+      updateIQ(-1, reason);
+    }
     document.getElementById('liveDot').style.opacity = seconds % 2 === 0 ? '1' : '0.3';
   }, 1000);
   scheduleNextBrain('neutral');
