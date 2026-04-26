@@ -339,22 +339,21 @@ function showToast(msg, kind='') {
 }
 
 function pickItem(items, used, fallbackItems=null) {
-  // Non ripetere le notizie normali nella stessa run. Quando finiscono, usa solo déjà-vu studiati.
+  // Se il pool principale è vuoto, usa il fallback se disponibile
   if (!items || items.length === 0) {
-    const fb = fallbackItems && fallbackItems.length ? fallbackItems[Math.floor(Math.random()*fallbackItems.length)] : ["Feed esaurito. Persino l'algoritmo ha finito le scuse.", "Déjà-vu"];
-    return [fb, -1];
+    const src = fallbackItems && fallbackItems.length ? fallbackItems : null;
+    if (!src) return [["Feed esaurito.", "Déjà-vu"], -1];
+    const idx = Math.floor(Math.random()*src.length);
+    return [src[idx], -1];
   }
+  // Pool esaurito: auto-reset invece di fallback fisso.
+  // Il feed ricomincia dal pool invece di mostrare sempre le stesse 5 notizie.
   if (used.length >= items.length) {
-    const fb = fallbackItems && fallbackItems.length ? fallbackItems[Math.floor(Math.random()*fallbackItems.length)] : ["Hai letto tutto. Il feed adesso si ripete e fa finta sia nostalgia.", "Déjà-vu"];
-    return [fb, -1];
+    used.length = 0; // reset in-place: mantiene il riferimento all'array
   }
   let idx;
   let guard = 0;
-  do { idx = Math.floor(Math.random()*items.length); guard++; } while (used.includes(idx) && guard < 1000);
-  if (used.includes(idx)) {
-    const fb = fallbackItems && fallbackItems.length ? fallbackItems[Math.floor(Math.random()*fallbackItems.length)] : ["Ripetizione di emergenza: il contenuto è finito prima della dipendenza.", "Déjà-vu"];
-    return [fb, -1];
-  }
+  do { idx = Math.floor(Math.random()*items.length); guard++; } while (used.includes(idx) && guard < 500);
   used.push(idx);
   return [items[idx], idx];
 }
@@ -485,10 +484,12 @@ function addNewsCard(forceBrainrot=false) {
     else if (r < 0.8) { [item] = pickItem(NEWS_INTERESTING, intUsed, REPEATABLE_NEWS); cssClass = 'interesting'; }
     else { [item] = pickItem(NEWS_PEAK, peakUsed, REPEATABLE_NEWS); cssClass = 'peak'; }
   }
-  const [hl, tag] = item;
+  const [hl, tag] = Array.isArray(item) ? item : [item, 'Attualità'];
   const src = cssClass === 'brainrot-news' ? 'REDAZIONE SEMANTICAMENTE INSTABILE' : SOURCES[Math.floor(Math.random()*SOURCES.length)];
   const time = TIMES[Math.floor(Math.random()*TIMES.length)];
-  const comment = Math.random() < 0.25 ? `<div class="news-comment">${FAKE_COMMENTS[Math.floor(Math.random()*FAKE_COMMENTS.length)]}</div>` : '';
+  const comment = (Math.random() < 0.25 && FAKE_COMMENTS.length > 0)
+    ? `<div class="news-comment">${FAKE_COMMENTS[Math.floor(Math.random()*FAKE_COMMENTS.length)] || ''}</div>`
+    : '';
   const div = document.createElement('div');
   div.className = 'news-card ' + cssClass;
   div.innerHTML = `<div class="news-src">${src}</div><div class="news-hl">${hl}</div><div class="news-meta"><span class="news-tag">${tag}</span><span class="news-time">${time}</span></div>${comment}`;
@@ -501,7 +502,7 @@ function addNewsCard(forceBrainrot=false) {
 function addLercioCard() {
   if (!LERCIO_NEWS || LERCIO_NEWS.length === 0) { addNewsCard(); return; }
   const [item] = pickItem(LERCIO_NEWS, lercioUsed);
-  const [hl, tag] = item;
+  const [hl, tag] = Array.isArray(item) ? item : [item, 'Satira'];
   const src = SOURCES[Math.floor(Math.random()*SOURCES.length)];
   const time = TIMES[Math.floor(Math.random()*TIMES.length)];
   const div = document.createElement('div');
