@@ -56,6 +56,16 @@
   .news-card.peak { border-left: 2px solid var(--red); }
   .news-card.peak .news-hl { color: #ffdddd; font-style: italic; }
   .news-card.interesting .news-tag { background: #131c13; color: #6fa66f; border-color: #1c2c1c; }
+  .news-card.lercio { border-left: 2px solid #d4a017; background: #131108; }
+  .news-card.lercio .news-hl { color: #fff8e8; }
+  .news-card.lercio .news-src { color: #c8920a; letter-spacing: 0.12em; }
+  .news-card.lercio .news-tag { background: #1e1800; color: #c8920a; border-color: #2e2400; }
+  .news-card.lercio::before { content: 'SATIRA'; display: inline-block; font-size: 9px; font-family: 'Courier New', monospace; color: #c8920a; background: #2a1e00; border: 1px solid #3a2c00; border-radius: 3px; padding: 1px 5px; letter-spacing: 0.12em; margin-bottom: 7px; }
+  .meta-card { background: #0f0f18; border: 1px solid #2a2a4a; border-left: 2px solid #6060cc; border-radius: 10px; padding: 14px; margin-bottom: 10px; animation: fadeUp 0.3s ease; }
+  .meta-card-label { font-size: 9px; color: #7070cc; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 7px; }
+  .meta-card-body { font-size: 13px; color: #d0d0f0; line-height: 1.55; }
+  .meta-card-stat { font-size: 18px; font-weight: 700; color: #9090ff; font-family: 'Courier New', monospace; margin: 8px 0 4px; }
+  .meta-card-note { font-size: 11px; color: #7070aa; margin-top: 8px; font-style: italic; }
   .promo-card { background: linear-gradient(135deg, #21180b 0%, #1a1a1a 58%, #17100c 100%); border: 1px dashed #b9822d; border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; animation: fadeUp 0.3s ease; box-shadow: 0 0 0 1px rgba(185,130,45,.12); }
   .promo-card::before { content: 'SPONSOR WELLNESS / TRAPPOLA DI LUCIDITÀ'; display: block; font-size: 10px; color: #d8bd77; letter-spacing: .16em; font-family: 'Courier New', monospace; margin-bottom: 7px; opacity: .9; }
   .promo-card:hover { border-color: #666; }
@@ -239,6 +249,7 @@ let EXTRA_INTERESTING = [], EXTRA_PEAK = [], EXTRA_BRAINROT = [];
 let EXTRA_NEWS_MEH_V28 = [], EXTRA_NEWS_INTERESTING_V28 = [];
 let EXTRA_NEWS_PEAK_V28 = [], EXTRA_NEWS_BRAINROT_V28 = [];
 let FAKE_COMMENTS = [], ADS = [];
+let LERCIO_NEWS = []; // caricato da lercio.json
 let QUIZZES = []; // caricato da quizzes.json
 
 let BRAIN_MSGS = [], BRAIN_IGNORE_MSGS = [];
@@ -254,7 +265,7 @@ const IQ_STAGES = [[80,"cosciente"],[60,"lievemente intontito"],[40,"mente plast
 let iq = 100, minIQ = 100, seconds = 0, newsCount = 0;
 let brainListened = 0, brainListenedStreak = 0, brainIgnored = 0, everIgnored = false;
 let cardsSinceInterruption = 0;
-let mehUsed = [], intUsed = [], peakUsed = [], adUsed = [], quizUsed = [], brainrotUsed = [];
+let mehUsed = [], intUsed = [], peakUsed = [], adUsed = [], quizUsed = [], brainrotUsed = [], lercioUsed = [];
 let recentLoadClicks = [];
 let gameOver = false, totalLoadMore = 0;
 let adClicks = 0, usefulAdClicks = 0, spiritualDebt = 0, adsShown = 0, loadsSinceAd = 0;
@@ -395,6 +406,48 @@ function addNewsCard(forceBrainrot=false) {
   newsCount++;
   document.getElementById('newsCount').textContent = newsCount;
   cardsSinceInterruption++;
+}
+
+function addLercioCard() {
+  if (!LERCIO_NEWS || LERCIO_NEWS.length === 0) { addNewsCard(); return; }
+  const [item] = pickItem(LERCIO_NEWS, lercioUsed);
+  const [hl, tag] = item;
+  const time = TIMES[Math.floor(Math.random()*TIMES.length)];
+  const src = SOURCES[Math.floor(Math.random()*SOURCES.length)];
+  const div = document.createElement('div');
+  div.className = 'news-card lercio';
+  div.innerHTML = `<div class="news-src">${src}</div><div class="news-hl">${escapeHtml(hl)}</div><div class="news-meta"><span class="news-tag">${escapeHtml(tag)}</span><span class="news-time">${time}</span></div>`;
+  div.style.cursor = 'pointer';
+  let clicked = false;
+  div.onclick = () => {
+    if (clicked || gameOver) return;
+    clicked = true;
+    div.style.cursor = 'default';
+    updateIQ(1, 'satira riconosciuta come satira — raro evento neurologico');
+    showToast('+1 QI: hai distinto satira da realtà. sei nel 23% della popolazione.', 'good');
+  };
+  feed.appendChild(div);
+  newsCount++;
+  document.getElementById('newsCount').textContent = newsCount;
+  cardsSinceInterruption++;
+}
+
+let metaCardShown = false;
+const META_STATS = [
+  { pct: '77%', text: 'degli italiani ha condiviso almeno una notizia satirica credendola vera', src: 'YouGov 2023' },
+  { pct: '64%', text: 'degli utenti non apre l\'articolo prima di commentarlo', src: 'Reuters Institute 2024' },
+  { pct: '59%', text: 'dei titoli satirici vengono creduti veri da almeno la metà di chi li legge', src: 'Science 2018' },
+  { pct: '1 su 3', text: 'delle notizie in un feed generico è falsa, fuorviante o fuori contesto', src: 'MIT Media Lab' },
+];
+
+function addMetaCard() {
+  if (metaCardShown || gameOver) return;
+  metaCardShown = true;
+  const s = META_STATS[Math.floor(Math.random() * META_STATS.length)];
+  const div = document.createElement('div');
+  div.className = 'meta-card';
+  div.innerHTML = `<div class="meta-card-label">▸ nota del sistema</div><div class="meta-card-body">alcune notizie in questo feed vengono da un sito satirico italiano. sono chiaramente false.<br>eppure:</div><div class="meta-card-stat">${s.pct}</div><div class="meta-card-body">${s.text}.</div><div class="meta-card-note">fonte: ${s.src} — il feed non dirà mai quali sono le satiriche. il tuo QI dovrebbe.</div>`;
+  feed.appendChild(div);
 }
 
 function addAdCard() {
@@ -700,8 +753,17 @@ function onLoadMore(btn, event) {
     const newsToAdd = 6 + Math.floor(Math.random()*2);
     const mustShowAd = adsShown < 4 || loadsSinceAd >= 2;
     const mustShowQuiz = totalLoadMore <= 3 || (totalLoadMore % 2 === 0);
+    // Lercio appare ogni 3 load circa, in posizione casuale tra le notizie.
+    const showLercio = LERCIO_NEWS.length > 0 && totalLoadMore % 3 === 0;
+    const lercioAt = showLercio ? 1 + Math.floor(Math.random()*4) : -1;
     for (let i = 0; i < newsToAdd; i++) {
-      addNewsCard(brainrotLevel >= 3 && i === newsToAdd-1);
+      if (i === lercioAt) {
+        addLercioCard();
+        // Prima card Lercio → mostra subito la meta card disclaimer, una volta sola
+        if (!metaCardShown) addMetaCard();
+      } else {
+        addNewsCard(brainrotLevel >= 3 && i === newsToAdd-1);
+      }
       if (i === 1 && mustShowQuiz) addQuizCard();
       if (i === 3 && mustShowAd) addAdCard();
     }
@@ -919,7 +981,8 @@ function resetStateForNewRun() {
   brainListened = 0; brainListenedStreak = 0; brainIgnored = 0; everIgnored = false;
   cardsSinceInterruption = 0; recentLoadClicks = []; gameOver = false; totalLoadMore = 0;
   adClicks = 0; usefulAdClicks = 0; spiritualDebt = 0; adsShown = 0; loadsSinceAd = 0; brainrotLevel = 0; doubleClickStreak = 0; lastLoadClickAt = 0; scrollLossDebt = 0; interruptionCount = 0;
-  mehUsed = []; intUsed = []; peakUsed = []; adUsed = []; quizUsed = []; brainrotUsed = [];
+  mehUsed = []; intUsed = []; peakUsed = []; adUsed = []; quizUsed = []; brainrotUsed = []; lercioUsed = [];
+  metaCardShown = false;
   lastStage = '';
   feed.innerHTML = '';
   document.getElementById('endingOverlay').className = 'ending-overlay';
@@ -1015,11 +1078,13 @@ const FALLBACK_QUIZ = [{
 
 Promise.allSettled([
   fetch('content.json').then(r => r.json()),
-  fetch('quizzes.json').then(r => r.json())
-]).then(([contentRes, quizzesRes]) => {
+  fetch('quizzes.json').then(r => r.json()),
+  fetch('lercio.json').then(r => r.json())
+]).then(([contentRes, quizzesRes, lercioRes]) => {
   applyContent(contentRes.status === 'fulfilled' ? contentRes.value : FALLBACK_CONTENT);
   const qData = quizzesRes.status === 'fulfilled' ? quizzesRes.value : FALLBACK_QUIZ;
   QUIZZES.push(...qData);
+  if (lercioRes.status === 'fulfilled') LERCIO_NEWS.push(...lercioRes.value);
 }).finally(() => init());
 </script>
 </body>
