@@ -66,6 +66,7 @@
   .meta-card-body { font-size: 13px; color: #d0d0f0; line-height: 1.55; }
   .meta-card-stat { font-size: 18px; font-weight: 700; color: #9090ff; font-family: 'Courier New', monospace; margin: 8px 0 4px; }
   .meta-card-note { font-size: 11px; color: #7070aa; margin-top: 8px; font-style: italic; }
+  .meta-card-outro { font-size: 13px; color: #a0a0e0; margin-top: 10px; line-height: 1.55; font-style: italic; }
   .promo-card { background: linear-gradient(135deg, #21180b 0%, #1a1a1a 58%, #17100c 100%); border: 1px dashed #b9822d; border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; animation: fadeUp 0.3s ease; box-shadow: 0 0 0 1px rgba(185,130,45,.12); }
   .promo-card::before { content: 'SPONSOR WELLNESS / TRAPPOLA DI LUCIDITÀ'; display: block; font-size: 10px; color: #d8bd77; letter-spacing: .16em; font-family: 'Courier New', monospace; margin-bottom: 7px; opacity: .9; }
   .promo-card:hover { border-color: #666; }
@@ -171,7 +172,7 @@
 
 
 
-  /* v2.9 — product page instead of info list */
+  /* v2.10 — lercio cards + meta disclaimer card */
   .shop-modal { width: min(460px, 100%); padding: 0; overflow: hidden; background: #120f0b; }
   .shop-hero { padding: 16px; background: radial-gradient(circle at 20% 0%, rgba(216,189,119,.14), transparent 38%), linear-gradient(135deg, #1d1409, #12100d 62%); border-bottom: 1px solid #4a351d; }
   .shop-top { margin-bottom: 0; align-items: center; }
@@ -434,10 +435,34 @@ function addLercioCard() {
 
 let metaCardShown = false;
 const META_STATS = [
-  { pct: '77%', text: 'degli italiani ha condiviso almeno una notizia satirica credendola vera', src: 'YouGov 2023' },
-  { pct: '64%', text: 'degli utenti non apre l\'articolo prima di commentarlo', src: 'Reuters Institute 2024' },
-  { pct: '59%', text: 'dei titoli satirici vengono creduti veri da almeno la metà di chi li legge', src: 'Science 2018' },
-  { pct: '1 su 3', text: 'delle notizie in un feed generico è falsa, fuorviante o fuori contesto', src: 'MIT Media Lab' },
+  {
+    label: 'MOMENTO DI ONESTÀ NON RICHIESTO',
+    intro: 'alcune notizie che stai leggendo sono satira certificata.\nsono false per definizione. è scritto dappertutto.',
+    stat: '77%',
+    body: 'degli italiani le condivide credendoci davvero.',
+    outro: 'il feed non le segnalerà mai.\nsei nel 77%?'
+  },
+  {
+    label: 'COMUNICATO DALLA REDAZIONE',
+    intro: 'alcune notizie qui dentro vengono da un sito satirico.\nnon sono vere. non sono mai state vere.',
+    stat: '64%',
+    body: 'degli utenti non apre l\'articolo prima di commentarlo.',
+    outro: 'il titolo basta a formarsi un\'opinione.\nstai usando il titolo?'
+  },
+  {
+    label: 'AVVISO DI SERVIZIO',
+    intro: 'questo feed mescola notizie reali e satira.\nil tuo cervello probabilmente non nota la differenza.',
+    stat: '59%',
+    body: 'dei titoli satirici vengono creduti veri da chi li legge.',
+    outro: 'il feed non dirà mai quali sono le false.\nbuona fortuna.'
+  },
+  {
+    label: 'INTERRUZIONE TEMPORANEA DI PROGRAMMA',
+    intro: 'alcune notizie che hai già scrollato erano satira.\nhai notato qualcosa di strano?',
+    stat: '1 su 3',
+    body: 'delle notizie in un feed generico è falsa, fuorviante o fuori contesto.',
+    outro: 'il feed continuerà come se nulla fosse.\nanche tu, probabilmente.'
+  },
 ];
 
 function addMetaCard() {
@@ -446,7 +471,7 @@ function addMetaCard() {
   const s = META_STATS[Math.floor(Math.random() * META_STATS.length)];
   const div = document.createElement('div');
   div.className = 'meta-card';
-  div.innerHTML = `<div class="meta-card-label">▸ nota del sistema</div><div class="meta-card-body">alcune notizie in questo feed vengono da un sito satirico italiano. sono chiaramente false.<br>eppure:</div><div class="meta-card-stat">${s.pct}</div><div class="meta-card-body">${s.text}.</div><div class="meta-card-note">fonte: ${s.src} — il feed non dirà mai quali sono le satiriche. il tuo QI dovrebbe.</div>`;
+  div.innerHTML = `<div class="meta-card-label">▸ ${s.label}</div><div class="meta-card-body">${s.intro.replace(/\n/g,'<br>')}</div><div class="meta-card-stat">${s.stat}</div><div class="meta-card-body">${s.body}</div><div class="meta-card-outro">${s.outro.replace(/\n/g,'<br>')}</div>`;
   feed.appendChild(div);
 }
 
