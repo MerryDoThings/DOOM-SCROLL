@@ -153,6 +153,10 @@
   .news-card.lercio .news-src { color: #888; letter-spacing: 0.12em; }
   .news-card.lercio .news-tag { background: #1a1a1a; color: #777; border-color: #222; }
 
+  /* ── Giosu easter egg card — accento azzurro appena visibile ── */
+  .news-card.giosu-egg { border-left: 2px solid #1a3a5a; background: #0d1117; }
+  .news-card.giosu-egg .news-hl { color: #e8eef5; }
+
   .promo-card { background: linear-gradient(135deg, #21180b 0%, #1a1a1a 58%, #17100c 100%); border: 1px dashed #b9822d; border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; animation: fadeUp 0.3s ease; box-shadow: 0 0 0 1px rgba(185,130,45,.12); }
   .promo-card::before { content: 'SPONSOR WELLNESS / TRAPPOLA DI LUCIDITÀ'; display: block; font-size: 10px; color: #d8bd77; letter-spacing: .16em; font-family: 'Courier New', monospace; margin-bottom: 7px; opacity: .9; }
   .promo-card:hover { border-color: #666; }
@@ -438,17 +442,17 @@
   }
   .comment-item:last-of-type { border-bottom: none; }
   .comment-header { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; }
-  .comment-author { font-size: 10px; font-family: 'Courier New', monospace; color: #555; letter-spacing: 0.06em; }
-  .comment-text { font-size: 12px; color: #888; line-height: 1.5; }
+  .comment-author { font-size: 10px; font-family: 'Courier New', monospace; color: #aaaaaa; letter-spacing: 0.06em; }
+  .comment-text { font-size: 12px; color: #e0e0e0; line-height: 1.5; }
   .comment-reactions { display: flex; gap: 10px; margin-top: 4px; }
-  .comment-reaction { font-size: 10px; color: #3a3a3a; font-family: 'Courier New', monospace; }
+  .comment-reaction { font-size: 10px; color: #888; font-family: 'Courier New', monospace; }
   .comments-load-more {
     display: block;
     width: 100%;
     text-align: center;
     font-size: 10px;
     font-family: 'Courier New', monospace;
-    color: #444;
+    color: #888;
     letter-spacing: 0.08em;
     padding: 8px 0 2px;
     background: none;
@@ -456,7 +460,7 @@
     cursor: pointer;
     pointer-events: all;
   }
-  .comments-load-more:hover { color: #666; }
+  .comments-load-more:hover { color: #999; }
   .news-card.brainrot-news { border-color: #ff3030; box-shadow: 0 0 0 1px rgba(255,48,48,.15); animation: fadeUp 0.3s ease, glitch2 1.2s infinite; }
   .news-card.brainrot-news .news-hl { color: #ffd0d0; font-family: 'Courier New', monospace; }
 
@@ -520,6 +524,10 @@
   .shop-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 180; padding: 18px; background: rgba(0,0,0,.88); animation: fadeIn .18s ease; }
   .shop-overlay.active { display: flex; }
   .shop-modal { width: min(440px, 100%); background: #12100d; border: 1px solid #b9822d; border-radius: 14px; padding: 18px; box-shadow: 0 18px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(185,130,45,.15); }
+
+  /* Toast interno allo shop — in alto, max 1 */
+  .shop-toast-wrap { position: sticky; top: 0; z-index: 10; pointer-events: none; min-height: 0; }
+  .shop-toast { background: rgba(18,16,13,.97); border: 1px solid #3a2c00; color: #d8bd77; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-family: 'Courier New', monospace; animation: toastIn .3s ease; line-height: 1.4; margin-bottom: 10px; }
   .shop-top { display: flex; gap: 14px; align-items: stretch; margin-bottom: 14px; }
   .shop-asset { width: 92px; min-width: 92px; border-radius: 12px; border: 1px solid #4a351d; background: radial-gradient(circle at 35% 25%, #443016, #18120d 70%); display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative; overflow: hidden; }
   .shop-asset::after { content: 'ASSET'; position: absolute; bottom: 6px; right: 7px; font-size: 8px; letter-spacing: .15em; color: #c8a045; opacity: .65; font-family: 'Courier New', monospace; }
@@ -705,7 +713,9 @@
 
 <div class="ending-overlay" id="endingOverlay"></div>
 <div class="shop-overlay" id="shopOverlay">
-  <div class="shop-modal" id="shopModal"></div>
+  <div class="shop-modal" id="shopModal">
+    <div class="shop-toast-wrap" id="shopToastWrap"></div>
+  </div>
 </div>
 <!-- Splash Screen -->
 <div class="splash-overlay" id="splashOverlay">
@@ -962,7 +972,8 @@ function flushAll() {
 }
 
 function showToast(msg, kind='') {
-  if (convInProgress) return; // silenzio durante la conversazione
+  if (convInProgress) return;
+  if (shopOpen) return; // silenzio durante lo shop — usa showShopToast
   const wrap = document.getElementById('toastWrap');
   const existing = wrap.querySelectorAll('.toast');
   if (existing.length >= 2) {
@@ -977,6 +988,18 @@ function showToast(msg, kind='') {
 
 function clearToasts() {
   document.getElementById('toastWrap').innerHTML = '';
+}
+
+let shopOpen = false;
+function showShopToast(msg) {
+  const wrap = document.getElementById('shopToastWrap');
+  if (!wrap) return;
+  wrap.innerHTML = ''; // max 1
+  const div = document.createElement('div');
+  div.className = 'shop-toast';
+  div.textContent = msg;
+  wrap.appendChild(div);
+  setTimeout(() => { if (div.parentNode) div.remove(); }, 4000);
 }
 
 function pickItem(items, used, fallbackItems=null) {
@@ -1242,6 +1265,9 @@ let EXPANSION_TOASTS = [
   "contenuto consumato. prossimo contenuto disponibile.",
 ];
 
+let GIOSU_EGGS = [];
+let giosuEggsUsed = [];
+
 // ── A5 — commenti strutturati (sganciati dalla notizia) ───────────────────
 let COMMENT_AUTHORS = [
   'GiuseppeR68', 'marinatvb', 'Luca_V', 'nonnapaola52', 'cittadinoqualunque',
@@ -1361,21 +1387,66 @@ function addBrainrotImgCard() {
   setTimeout(() => div.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 }
 
+// ── Giosu easter egg cards ────────────────────────────────────────────────
+function addGiosuEggCard() {
+  if (!GIOSU_EGGS.length) return;
+  const [egg] = pickItem(GIOSU_EGGS, giosuEggsUsed);
+  if (!egg) return;
+  const src = SOURCES[Math.floor(Math.random() * SOURCES.length)];
+  const time = TIMES[Math.floor(Math.random() * TIMES.length)];
+  const nvClass = nirvanaClass(iq);
+  const div = document.createElement('div');
+  div.className = ('news-card giosu-egg ' + nvClass).trim();
+  div.dataset.pool = 'giosu_egg';
+  div.dataset.tag = egg.tag;
+  div.innerHTML = `<div class="news-src">${src}</div><div class="news-hl">${degradeTitle(egg.hl, iq)}</div><div class="news-meta"><span class="news-tag">${egg.tag}</span><span class="news-time">${time}</span></div>`;
+  // Espansione con i commenti fissi della card
+  div.addEventListener('click', (e) => {
+    if (e.target.closest('button') || div.classList.contains('expanded') || gameOver) return;
+    div.classList.add('expanded');
+    const fakeCount = 47 + Math.floor(Math.random() * 300);
+    const toast = EXPANSION_TOASTS[Math.floor(Math.random() * EXPANSION_TOASTS.length)];
+    const commentsHtml = egg.comments.map(cm => `
+      <div class="comment-item">
+        <div class="comment-header"><span class="comment-author">${cm.a}</span></div>
+        <div class="comment-text">${degradeTitle(cm.t, iq)}</div>
+        ${iq >= 30 ? `<div class="comment-reactions"><span class="comment-reaction">👍 ${cm.r[0]}</span><span class="comment-reaction">🤡 ${cm.r[1]}</span></div>` : ''}
+      </div>`).join('');
+    const safeHl = egg.hl.replace(/'/g, '&#39;');
+    const fakeToast = `i restanti ${fakeCount} commenti sono uguali a questi.`;
+    div.insertAdjacentHTML('beforeend', `<div class="news-expansion ${nvClass}"><div class="expansion-body">${safeHl}</div><div class="comments-section">${commentsHtml}<button class="comments-load-more" onclick="showToast('${fakeToast.replace(/'/g,"\\'")}')">carica altri ${fakeCount} commenti</button></div></div>`);
+    updateIQ(-1, toast);
+  });
+  feed.appendChild(div);
+  newsCount++;
+  document.getElementById('newsCount').textContent = newsCount;
+  cardsSinceInterruption++;
+}
+
 function buildExpansion(tag) {
   const nv = nirvanaClass(iq);
   const pool = EXPANSION_DESCS[tag] || EXPANSION_DEFAULT;
   const desc = pool[Math.floor(Math.random() * pool.length)];
 
   // A QI basso: meno commenti, più frammentati
-  let numComments = 2 + Math.floor(Math.random() * 2);
+  let numComments = 3 + Math.floor(Math.random() * 2); // 3 o 4
   if (iq < 30) numComments = 1;
   if (iq < 15) numComments = 0;
 
   const usedIdx = new Set();
+  const usedAuthors = new Set();
   const comments = [];
-  while (comments.length < numComments) {
+  let attempts = 0;
+  while (comments.length < numComments && attempts < COMMENT_POOL.length * 2) {
+    attempts++;
     const idx = Math.floor(Math.random() * COMMENT_POOL.length);
-    if (!usedIdx.has(idx)) { usedIdx.add(idx); comments.push(COMMENT_POOL[idx]); }
+    const cm = COMMENT_POOL[idx];
+    const author = cm.a || null;
+    if (!usedIdx.has(idx) && (!author || !usedAuthors.has(author))) {
+      usedIdx.add(idx);
+      if (author) usedAuthors.add(author);
+      comments.push(cm);
+    }
   }
   const fakeCount = 47 + Math.floor(Math.random() * 800);
   const toastOptions = [
@@ -1389,7 +1460,7 @@ function buildExpansion(tag) {
   const loadMoreToast = toastOptions[Math.floor(Math.random() * toastOptions.length)];
 
   const commentsHtml = comments.map(c => {
-    const author = COMMENT_AUTHORS[Math.floor(Math.random() * COMMENT_AUTHORS.length)];
+    const author = c.a || COMMENT_AUTHORS[Math.floor(Math.random() * COMMENT_AUTHORS.length)];
     // Degrada il testo del commento come i titoli
     const txt = degradeTitle(c.t, iq);
     return `<div class="comment-item"><div class="comment-header"><span class="comment-author">${iq < 30 ? '…' : author}</span></div><div class="comment-text">${txt}</div>${iq >= 30 ? `<div class="comment-reactions"><span class="comment-reaction">👍 ${c.r[0]}</span><span class="comment-reaction">🤡 ${c.r[1]}</span></div>` : ''}</div>`;
@@ -1586,10 +1657,13 @@ function openProductPage(ad, sourceEl) {
       </div>
     </div>`;
   document.getElementById('shopOverlay').classList.add('active');
+  shopOpen = true;
+  clearToasts();
 }
 
 function closeProductPage() {
   document.getElementById('shopOverlay').classList.remove('active');
+  shopOpen = false;
   pendingPromo = null;
   pendingPromoElement = null;
   purchaseGateStep = 0;
@@ -1676,7 +1750,7 @@ function completePromoPurchase() {
   if (!gameOver && adClicks >= 5 && iq >= 35) {
     setTimeout(() => triggerEnding('capitalismo'), 650);
   } else if (!gameOver && adClicks >= 5 && iq < 35) {
-    showToast('Troppo tardi per il capitalismo spirituale. Sei già quasi folklore.', 'bad');
+    showShopToast('Troppo tardi per il capitalismo spirituale. Sei già quasi folklore.');
   }
 }
 
@@ -1697,7 +1771,7 @@ function buyCurrentPromo() {
       btn.classList.add('armed');
       btn.textContent = purchaseGateStep >= required ? 'ok, compra davvero' : `conferma ${purchaseGateStep + 1}/${required}`;
     }
-    showToast(`Frizione anti-shopping ${purchaseGateStep}/${required}. Il cervello applaude piano.`, purchaseGateStep >= required ? 'bad' : 'good');
+    showShopToast(`Frizione anti-shopping ${purchaseGateStep}/${required}. Il cervello applaude piano.`);
     return;
   }
   completePromoPurchase();
@@ -1903,6 +1977,10 @@ function onLoadMore(btn, event) {
     const showLercio = LERCIO_NEWS.length > 0 && totalLoadMore % lercioFreq === 0;
     const lercioAt = showLercio ? 1 + Math.floor(Math.random()*4) : -1;
     for (let i = 0; i < newsToAdd; i++) {
+      // Giosu easter egg: ogni ~7 load, inserita come card normale nel batch
+      if (i === 2 && GIOSU_EGGS.length > giosuEggsUsed.length && totalLoadMore >= 3 && totalLoadMore % 7 === 3) {
+        addGiosuEggCard();
+      }
       if (i === lercioAt) {
         addLercioCard();
       } else {
@@ -2525,6 +2603,7 @@ function resetStateForNewRun() {
   brainrotImgShown = false;
   metaAware = false; metaAwareLoads = 0;
   antibotShown = false; debugMode = false; debugModeLoads = 0;
+  giosuEggsUsed = [];
   brainListened = 0; brainListenedStreak = 0; brainIgnored = 0; everIgnored = false;
   cardsSinceInterruption = 0; recentLoadClicks = []; gameOver = false; totalLoadMore = 0;
   adClicks = 0; usefulAdClicks = 0; spiritualDebt = 0; adsShown = 0; loadsSinceAd = 0; brainrotLevel = 0; doubleClickStreak = 0; lastLoadClickAt = 0; scrollLossDebt = 0; interruptionCount = 0;
@@ -2538,6 +2617,7 @@ function resetStateForNewRun() {
   document.getElementById('endingOverlay').innerHTML = '';
   document.getElementById('brainOverlay').classList.remove('active');
   document.getElementById('shopOverlay')?.classList.remove('active');
+  shopOpen = false;
   // Bug fix: chiudi anche gli altri overlay possibili (notifica, conversazione, pre-finale)
   document.getElementById('notifOverlay')?.classList.remove('active');
   document.getElementById('convOverlay')?.classList.remove('active');
@@ -3184,6 +3264,7 @@ function applyContent(c) {
   if (c.expansion_default && c.expansion_default.length) EXPANSION_DEFAULT = c.expansion_default;
   if (c.expansion_toasts && c.expansion_toasts.length)   EXPANSION_TOASTS  = c.expansion_toasts;
   if (c.fake_close_msgs && c.fake_close_msgs.length)     FAKE_CLOSE_MSGS   = c.fake_close_msgs;
+  if (c.giosu_easter_eggs && c.giosu_easter_eggs.length) GIOSU_EGGS        = c.giosu_easter_eggs;
   // Antifascismo: mergia in NEWS_INTERESTING shufflato
   const antifas = c.news_antifascismo || NEWS_ANTIFASCISMO;
   NEWS_INTERESTING = NEWS_INTERESTING.concat(antifas).sort(() => Math.random() - 0.5);

@@ -4822,7 +4822,10 @@
     "Gianni68",
     "lettoetweetato",
     "GabrieleM",
-    "rosaria_dice"
+    "rosaria_dice",
+    "giosu_13",
+    "vale_o",
+    "tecnicamente_vivo"
   ],
   "comment_pool": [
     {
@@ -5330,5 +5333,187 @@
     "sessione salvata. riprendi pure da dove eri.",
     "chiusura annullata: contenuti non ancora visualizzati.",
     "il sistema ti vuole bene a modo suo."
+  ],
+  "giosu_easter_eggs": [
+    {
+      "hl": "Politico propone legge 'per tutelare i valori naturali della famiglia'. Testo ancora da definire.",
+      "tag": "Politica",
+      "comments": [
+        {
+          "t": "Parla di libertà ma decide lui cosa è accettabile oppure no. Classico.",
+          "r": [
+            415,
+            22
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "esatto, libertà solo per chi è d'accordo con lui",
+          "r": [
+            87,
+            3
+          ],
+          "a": "vale_o"
+        },
+        {
+          "t": "comunque il nome Frank mi ha già detto tutto",
+          "r": [
+            234,
+            45
+          ],
+          "a": "nonnapaola52"
+        }
+      ]
+    },
+    {
+      "hl": "Docuserie storica accusata di revisionismo: 'Cambia la storia per motivi ideologici'.",
+      "tag": "Cultura",
+      "comments": [
+        {
+          "t": "Uno di quelli che ha già deciso la verità prima di leggere le fonti.",
+          "r": [
+            279,
+            67
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "vabbè ma anche l'altra parte lo fa",
+          "r": [
+            156,
+            12
+          ],
+          "a": "GabrieleM"
+        },
+        {
+          "t": "Cleopatra era macedone btw",
+          "r": [
+            891,
+            34
+          ],
+          "a": "informato_davvero"
+        }
+      ]
+    },
+    {
+      "hl": "Leader religioso: 'La famiglia tradizionale è il pilastro della società'. Undicesimo figlio in arrivo.",
+      "tag": "Mondo",
+      "comments": [
+        {
+          "t": "He loves his 12 wives so much 🥰",
+          "r": [
+            4401,
+            12
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "lmao",
+          "r": [
+            2341,
+            4
+          ],
+          "a": "marinatvb"
+        },
+        {
+          "t": "i valori della famiglia ma con scontrino",
+          "r": [
+            567,
+            89
+          ],
+          "a": "ex_elettore"
+        }
+      ]
+    },
+    {
+      "hl": "Rapporto: Pianura Padana tra le aree con qualità dell'aria peggiore d'Europa. Dati in peggioramento.",
+      "tag": "Cronaca",
+      "comments": [
+        {
+          "t": "Praticamente se vivi in nord Italia ti prendi il cancro ai polmoni uscendo di casa",
+          "r": [
+            711,
+            23
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "e poi ci chiedono perché non vogliamo i figli",
+          "r": [
+            445,
+            11
+          ],
+          "a": "CarlaF"
+        },
+        {
+          "t": "abito a Milano da 3 anni, confermo",
+          "r": [
+            1203,
+            7
+          ],
+          "a": "Luca_V"
+        }
+      ]
+    },
+    {
+      "hl": "Studio: ansia e stress cronico in aumento tra i giovani maschi. Ricercatori: 'Fenomeno sottovalutato'.",
+      "tag": "Scienza",
+      "comments": [
+        {
+          "t": "Questo perché gli uomini scopano di meno",
+          "r": [
+            123,
+            19
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "fonte?",
+          "r": [
+            678,
+            234
+          ],
+          "a": "pensiero_critico_vero"
+        },
+        {
+          "t": "la peer review non era necessaria per arrivare a questa conclusione",
+          "r": [
+            934,
+            8
+          ],
+          "a": "tecnicamente_vivo"
+        }
+      ]
+    },
+    {
+      "hl": "Sondaggio: il 34% degli italiani non uscirebbe con qualcuno di orientamento politico opposto.",
+      "tag": "Costume e società",
+      "comments": [
+        {
+          "t": "Dillo sempre al primo appuntamento, i veri uomini non starebbero mai con una di destra",
+          "r": [
+            1079,
+            34
+          ],
+          "a": "giosu_13"
+        },
+        {
+          "t": "tipo cosa stai dicendo",
+          "r": [
+            445,
+            178
+          ],
+          "a": "FrancescaB"
+        },
+        {
+          "t": "il 34% mente, è molto di più",
+          "r": [
+            789,
+            12
+          ],
+          "a": "GiuseppeR68"
+        }
+      ]
+    }
   ]
 }
